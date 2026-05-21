@@ -78,6 +78,7 @@ let state = {
   results: {
     winnerPos: null,      // 1..33
     lastPos: null,        // 1..33
+    runnersUp: [],        // [p2, p3, p4, p5] — optional, used for random pool cascade
     declared: false,
   },
   oddsOverride: {},       // { pos: "3-1" }
@@ -163,8 +164,15 @@ function computeStandings() {
 
 function computeRandomWinner() {
   if (!state.results.declared || !state.results.winnerPos) return null;
-  const winningEntry = state.randomPool.players.find(p => p.assignedPos === state.results.winnerPos);
-  return winningEntry || null;
+  const cascade = [state.results.winnerPos, ...(state.results.runnersUp || [])].filter(Boolean);
+  for (let i = 0; i < cascade.length; i++) {
+    const pos = cascade[i];
+    const match = state.randomPool.players.find(p => p.assignedPos === pos);
+    if (match) {
+      return { ...match, matchedPos: pos, matchedPlace: i + 1 };
+    }
+  }
+  return null;
 }
 
 // ────────────────────────────────────────────────────────────
@@ -275,9 +283,27 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/admin/results' && method === 'POST') {
       if (!checkAdmin(req)) return send(res, 401, { error: 'admin only' });
       const body = await readJsonBody(req);
-      state.results.winnerPos = parseInt(body.winnerPos, 10) || null;
-      state.results.lastPos = parseInt(body.lastPos, 10) || null;
-      state.results.declared = !!(state.results.winnerPos && state.results.lastPos);
+      const validPositions = INDY_FIELD.map(c => c.pos);
+      const winnerPos = parseInt(body.winnerPos, 10) || null;
+      const lastPos = parseInt(body.lastPos, 10) || null;
+      const runnersUpRaw = Array.isArray(body.runnersUp) ? body.runnersUp : [];
+      const runnersUp = runnersUpRaw
+        .map(n => parseInt(n, 10))
+        .filter(n => Number.isInteger(n) && validPositions.includes(n));
+
+      const allPositions = [winnerPos, ...runnersUp].filter(Boolean);
+      const uniquePositions = new Set(allPositions);
+      if (uniquePositions.size !== allPositions.length) {
+        return send(res, 400, { error: 'top finishers must all be different cars' });
+      }
+      if (winnerPos && lastPos && winnerPos === lastPos) {
+        return send(res, 400, { error: 'winner and last-place must be different cars' });
+      }
+
+      state.results.winnerPos = winnerPos;
+      state.results.lastPos = lastPos;
+      state.results.runnersUp = runnersUp;
+      state.results.declared = !!(winnerPos && lastPos);
       saveState();
       return send(res, 200, { ok: true, results: state.results });
     }
