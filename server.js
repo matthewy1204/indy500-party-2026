@@ -1,54 +1,67 @@
-// Derby Party — local server (Node.js, zero deps)
+// Indy 500 Party — local server (Node.js, zero deps)
 // Usage: node server.js
 
 const http = require('http');
-const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
 const PORT = process.env.PORT || 3000;
-const STATE_FILE = path.join(__dirname, 'derby-state.json');
+const STATE_FILE = path.join(__dirname, 'indy-state.json');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
 // ────────────────────────────────────────────────────────────
 // Config — edit these for your party
 // ────────────────────────────────────────────────────────────
 const CONFIG = {
-  partyName: "Lucas's Derby Party",
-  derbyDate: "Saturday, May 2, 2026 — 6:57 p.m. ET",
-  venmoHandle: "@LilNeutyVert", // change to your real handle
+  partyName: "Lucas's Indy 500 Party",
+  raceDate: "Sunday · May 24, 2026 · 12:45 p.m. ET",
+  raceSub: "110th Running · Greatest Spectacle in Racing",
+  venmoHandle: "@LilNeutyVert",
   zelleContact: "Lucas@hunden.com",
-  // Buy-ins per game (informational only; actual collection happens in person)
   randomPoolBuyIn: 10,
-  bestWorstBuyIn: 10,
-  adminPin: "derby2026", // change this
+  chickenDinnerBuyIn: 10,
+  adminPin: "indy2026",
 };
 
 // ────────────────────────────────────────────────────────────
-// 2026 Kentucky Derby field (post draw, with morning line odds)
+// 2026 Indianapolis 500 starting grid (post-qualifying, May 17 2026)
+// Pre-race odds baked from Practice 7 section-time data (May 18 2026)
 // ────────────────────────────────────────────────────────────
-const DERBY_FIELD = [
-  { post: 1,  name: "Renegade",        jockey: "Irad Ortiz Jr.",     trainer: "Todd Pletcher",      ml: "4-1"  },
-  { post: 2,  name: "Albus",            jockey: "Manny Franco",        trainer: "Riley Mott",         ml: "30-1" },
-  { post: 3,  name: "Intrepido",        jockey: "Hector Berrios",      trainer: "Jeff Mullins",       ml: "50-1" },
-  { post: 4,  name: "Litmus Test",      jockey: "Martin Garcia",       trainer: "Bob Baffert",        ml: "30-1" },
-  { post: 5,  name: "Right to Party",   jockey: "Christopher Elliott", trainer: "Kenny McPeek",       ml: "30-1" },
-  { post: 6,  name: "Commandment",      jockey: "Luis Saez",           trainer: "Brad Cox",           ml: "6-1"  },
-  { post: 7,  name: "Danon Bourbon",    jockey: "Atsuya Nishimura",    trainer: "Manabu Ikezoe",      ml: "20-1" },
-  { post: 8,  name: "So Happy",         jockey: "Mike Smith",          trainer: "Mark Glatt",         ml: "15-1" },
-  { post: 9,  name: "The Puma",         jockey: "Javier Castellano",   trainer: "Gustavo Delgado",    ml: "10-1" },
-  { post: 10, name: "Wonder Dean (JPN)", jockey: "Cristian Demuro",    trainer: "Daisuke Takayanagi", ml: "30-1" },
-  { post: 11, name: "Incredibolt",      jockey: "Jaime Torres",        trainer: "Riley Mott",         ml: "20-1" },
-  { post: 12, name: "Chief Wallabee",   jockey: "Junior Alvarado",     trainer: "Bill Mott",          ml: "8-1"  },
-  { post: 13, name: "Silent Tactic",    jockey: "Cristian Torres",     trainer: "Mark Casse",         ml: "20-1" },
-  { post: 14, name: "Potente",          jockey: "Juan Hernandez",      trainer: "Bob Baffert",        ml: "20-1" },
-  { post: 15, name: "Emerging Market",  jockey: "Flavien Prat",        trainer: "Chad Brown",         ml: "15-1" },
-  { post: 16, name: "Pavlovian",        jockey: "Edwin Maldonado",     trainer: "Doug O'Neill",       ml: "30-1" },
-  { post: 17, name: "Six Speed",        jockey: "Brian Hernandez Jr.", trainer: "Bhupat Seemar",      ml: "50-1" },
-  { post: 18, name: "Further Ado",      jockey: "John Velazquez",      trainer: "Brad Cox",           ml: "6-1"  },
-  { post: 19, name: "Golden Tempo",     jockey: "Jose Ortiz",          trainer: "Cherie DeVaux",      ml: "30-1" },
-  { post: 20, name: "Fulleffort",       jockey: "Tyler Gaffalione",    trainer: "Brad Cox",           ml: "20-1" },
+const INDY_FIELD = [
+  { pos: 1,  car: "10", name: "Alex Palou",          team: "Chip Ganassi Racing",  engine: "Honda", preRace: "4-1"   },
+  { pos: 2,  car: "20", name: "Alexander Rossi",     team: "Ed Carpenter Racing",  engine: "Chevy", preRace: "18-1"  },
+  { pos: 3,  car: "12", name: "David Malukas",       team: "Team Penske",          engine: "Chevy", preRace: "14-1"  },
+  { pos: 4,  car: "60", name: "Felix Rosenqvist",    team: "Meyer Shank Racing",   engine: "Honda", preRace: "25-1"  },
+  { pos: 5,  car: "14", name: "Santino Ferrucci",    team: "AJ Foyt Racing",       engine: "Chevy", preRace: "12-1"  },
+  { pos: 6,  car: "5",  name: "Pato O'Ward",         team: "Arrow McLaren",        engine: "Chevy", preRace: "6-1"   },
+  { pos: 7,  car: "8",  name: "Kyffin Simpson",      team: "Chip Ganassi Racing",  engine: "Honda", preRace: "25-1"  },
+  { pos: 8,  car: "23", name: "Conor Daly",          team: "Dreyer & Reinbold",    engine: "Chevy", preRace: "50-1"  },
+  { pos: 9,  car: "3",  name: "Scott McLaughlin",    team: "Team Penske",          engine: "Chevy", preRace: "10-1"  },
+  { pos: 10, car: "9",  name: "Scott Dixon",         team: "Chip Ganassi Racing",  engine: "Honda", preRace: "7-1"   },
+  { pos: 11, car: "76", name: "Rinus VeeKay",        team: "Juncos Hollinger",     engine: "Chevy", preRace: "20-1"  },
+  { pos: 12, car: "75", name: "Takuma Sato",         team: "RLL Racing",           engine: "Honda", preRace: "15-1"  },
+  { pos: 13, car: "33", name: "Ed Carpenter",        team: "Ed Carpenter Racing",  engine: "Chevy", preRace: "40-1"  },
+  { pos: 14, car: "06", name: "Helio Castroneves",   team: "Meyer Shank Racing",   engine: "Honda", preRace: "18-1"  },
+  { pos: 15, car: "21", name: "Christian Rasmussen", team: "Ed Carpenter Racing",  engine: "Chevy", preRace: "30-1"  },
+  { pos: 16, car: "66", name: "Marcus Armstrong",    team: "Meyer Shank Racing",   engine: "Chevy", preRace: "25-1"  },
+  { pos: 17, car: "28", name: "Marcus Ericsson",     team: "Andretti Global",      engine: "Honda", preRace: "16-1"  },
+  { pos: 18, car: "7",  name: "Christian Lundgaard", team: "Arrow McLaren",        engine: "Chevy", preRace: "22-1"  },
+  { pos: 19, car: "26", name: "Will Power",          team: "Andretti Global",      engine: "Honda", preRace: "9-1"   },
+  { pos: 20, car: "6",  name: "Nolan Siegel",        team: "Arrow McLaren",        engine: "Chevy", preRace: "50-1"  },
+  { pos: 21, car: "45", name: "Louis Foster",        team: "RLL Racing",           engine: "Honda", preRace: "60-1"  },
+  { pos: 22, car: "31", name: "Ryan Hunter-Reay",    team: "Arrow McLaren",        engine: "Chevy", preRace: "40-1"  },
+  { pos: 23, car: "2",  name: "Josef Newgarden",     team: "Team Penske",          engine: "Chevy", preRace: "5-1"   },
+  { pos: 24, car: "18", name: "Romain Grosjean",     team: "Dale Coyne Racing",    engine: "Honda", preRace: "35-1"  },
+  { pos: 25, car: "27", name: "Kyle Kirkwood",       team: "Andretti Global",      engine: "Honda", preRace: "9-1"   },
+  { pos: 26, car: "11", name: "Katherine Legge",     team: "HMD w/ AJ Foyt",       engine: "Chevy", preRace: "100-1" },
+  { pos: 27, car: "47", name: "Mick Schumacher",     team: "RLL Racing",           engine: "Honda", preRace: "80-1"  },
+  { pos: 28, car: "15", name: "Graham Rahal",        team: "RLL Racing",           engine: "Honda", preRace: "50-1"  },
+  { pos: 29, car: "19", name: "Dennis Hauger",       team: "Dale Coyne Racing",    engine: "Honda", preRace: "60-1"  },
+  { pos: 30, car: "51", name: "Jacob Abel",          team: "Abel Motorsports",     engine: "Chevy", preRace: "150-1" },
+  { pos: 31, car: "77", name: "Sting Ray Robb",      team: "Juncos Hollinger",     engine: "Chevy", preRace: "80-1"  },
+  { pos: 32, car: "4",  name: "Caio Collet",         team: "AJ Foyt Racing",       engine: "Chevy", preRace: "100-1" },
+  { pos: 33, car: "24", name: "Jack Harvey",         team: "Dreyer & Reinbold",    engine: "Chevy", preRace: "150-1" },
 ];
 
 // ────────────────────────────────────────────────────────────
@@ -56,21 +69,19 @@ const DERBY_FIELD = [
 // ────────────────────────────────────────────────────────────
 let state = {
   randomPool: {
-    players: [],          // [{name, assignedPost}]
+    players: [],          // [{name, assignedPos}]
     drawn: false,
   },
-  bestWorst: {
-    picks: [],            // [{name, winPost, lastPost}]
+  chickenDinner: {
+    picks: [],            // [{name, winPos, lastPos}]
   },
   results: {
-    winnerPost: null,     // 1..20
-    lastPost: null,       // 1..20
+    winnerPos: null,      // 1..33
+    lastPos: null,        // 1..33
     declared: false,
   },
-  oddsOverride: {},       // { post: "4-1" }
-  scratched: [],          // [post numbers]
-  liveOdds: {},           // { post: "4-1", ... } from last fetch
-  liveOddsUpdatedAt: null,
+  oddsOverride: {},       // { pos: "3-1" }
+  withdrawn: [],          // [pos numbers]
 };
 
 function loadState() {
@@ -94,67 +105,6 @@ function saveState() {
 }
 
 loadState();
-
-// ────────────────────────────────────────────────────────────
-// Live odds fetcher — scrapes TwinSpires
-// ────────────────────────────────────────────────────────────
-function fetchUrl(url) {
-  return new Promise((resolve, reject) => {
-    const req = https.get(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml',
-      },
-      timeout: 15000,
-    }, (res) => {
-      // Handle redirects
-      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return resolve(fetchUrl(new URL(res.headers.location, url).toString()));
-      }
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => resolve(data));
-    });
-    req.on('error', reject);
-    req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
-  });
-}
-
-async function fetchLiveOdds() {
-  const url = 'https://www.twinspires.com/kentuckyderby/odds/';
-  try {
-    const html = await fetchUrl(url);
-    const text = html.replace(/<script[\s\S]*?<\/script>/gi, '')
-                     .replace(/<style[\s\S]*?<\/style>/gi, '')
-                     .replace(/<[^>]+>/g, '\n')
-                     .replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ')
-                     .replace(/\n\s*\n/g, '\n');
-
-    const newOdds = {};
-    for (const horse of DERBY_FIELD) {
-      const re = new RegExp(escapeRegex(horse.name) + '[\\s\\S]{1,400}?(\\d{1,3}-\\d{1,3})(?:/1)?', 'i');
-      const m = text.match(re);
-      if (m) {
-        newOdds[horse.post] = m[1];
-      }
-    }
-    if (Object.keys(newOdds).length >= 10) {
-      state.liveOdds = newOdds;
-      state.liveOddsUpdatedAt = new Date().toISOString();
-      saveState();
-      console.log(`[odds] updated ${Object.keys(newOdds).length}/${DERBY_FIELD.length} horses from TwinSpires`);
-      return { ok: true, source: 'twinspires', count: Object.keys(newOdds).length };
-    }
-    return { ok: false, error: `parsed only ${Object.keys(newOdds).length} horses` };
-  } catch (e) {
-    return { ok: false, error: e.message };
-  }
-}
-
-function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
-
-setInterval(() => { fetchLiveOdds().catch(()=>{}); }, 5 * 60 * 1000);
-fetchLiveOdds().catch(()=>{});
 
 // ────────────────────────────────────────────────────────────
 // Helpers
@@ -198,12 +148,12 @@ function checkAdmin(req) {
   return pin === CONFIG.adminPin;
 }
 
-function computeBestWorstStandings() {
-  const { winnerPost, lastPost, declared } = state.results;
+function computeStandings() {
+  const { winnerPos, lastPos, declared } = state.results;
   if (!declared) return [];
-  const standings = state.bestWorst.picks.map(p => {
-    const winCorrect = p.winPost === winnerPost;
-    const lastCorrect = p.lastPost === lastPost;
+  const standings = state.chickenDinner.picks.map(p => {
+    const winCorrect = p.winPos === winnerPos;
+    const lastCorrect = p.lastPos === lastPos;
     const points = (winCorrect ? 1 : 0) + (lastCorrect ? 1 : 0);
     return { ...p, winCorrect, lastCorrect, points };
   });
@@ -212,8 +162,8 @@ function computeBestWorstStandings() {
 }
 
 function computeRandomWinner() {
-  if (!state.results.declared || !state.results.winnerPost) return null;
-  const winningEntry = state.randomPool.players.find(p => p.assignedPost === state.results.winnerPost);
+  if (!state.results.declared || !state.results.winnerPos) return null;
+  const winningEntry = state.randomPool.players.find(p => p.assignedPos === state.results.winnerPos);
   return winningEntry || null;
 }
 
@@ -240,17 +190,20 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/api/state' && method === 'GET') {
       return send(res, 200, {
-        config: { partyName: CONFIG.partyName, derbyDate: CONFIG.derbyDate, venmoHandle: CONFIG.venmoHandle, zelleContact: CONFIG.zelleContact, randomPoolBuyIn: CONFIG.randomPoolBuyIn, bestWorstBuyIn: CONFIG.bestWorstBuyIn },
-        field: DERBY_FIELD,
+        config: {
+          partyName: CONFIG.partyName,
+          raceDate: CONFIG.raceDate,
+          raceSub: CONFIG.raceSub,
+          venmoHandle: CONFIG.venmoHandle,
+          zelleContact: CONFIG.zelleContact,
+          randomPoolBuyIn: CONFIG.randomPoolBuyIn,
+          chickenDinnerBuyIn: CONFIG.chickenDinnerBuyIn,
+        },
+        field: INDY_FIELD,
         state,
-        bestWorstStandings: computeBestWorstStandings(),
+        standings: computeStandings(),
         randomWinner: computeRandomWinner(),
       });
-    }
-
-    if (pathname === '/api/odds/refresh' && method === 'POST') {
-      const result = await fetchLiveOdds();
-      return send(res, 200, { ...result, liveOdds: state.liveOdds, updatedAt: state.liveOddsUpdatedAt });
     }
 
     if (pathname === '/api/random/add' && method === 'POST') {
@@ -259,7 +212,7 @@ const server = http.createServer(async (req, res) => {
       const name = (body.name || '').trim();
       if (!name) return send(res, 400, { error: 'name required' });
       if (state.randomPool.players.find(p => p.name.toLowerCase() === name.toLowerCase())) return send(res, 400, { error: 'name already added' });
-      state.randomPool.players.push({ name, assignedPost: null });
+      state.randomPool.players.push({ name, assignedPos: null });
       saveState();
       return send(res, 200, { ok: true });
     }
@@ -275,10 +228,10 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/random/draw' && method === 'POST') {
       if (!checkAdmin(req)) return send(res, 401, { error: 'admin only' });
       if (state.randomPool.players.length === 0) return send(res, 400, { error: 'no players' });
-      const available = DERBY_FIELD.filter(h => !state.scratched.includes(h.post)).map(h => h.post);
+      const available = INDY_FIELD.filter(c => !state.withdrawn.includes(c.pos)).map(c => c.pos);
       const shuffled = shuffle(available);
       state.randomPool.players.forEach((p, i) => {
-        p.assignedPost = shuffled[i % shuffled.length];
+        p.assignedPos = shuffled[i % shuffled.length];
       });
       state.randomPool.drawn = true;
       saveState();
@@ -295,18 +248,18 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/picks/submit' && method === 'POST') {
       const body = await readJsonBody(req);
       const name = (body.name || '').trim();
-      const winPost = parseInt(body.winPost, 10);
-      const lastPost = parseInt(body.lastPost, 10);
+      const winPos = parseInt(body.winPos, 10);
+      const lastPos = parseInt(body.lastPos, 10);
       if (!name) return send(res, 400, { error: 'name required' });
-      if (!winPost || !lastPost) return send(res, 400, { error: 'pick a winner and a last-place horse' });
-      if (winPost === lastPost) return send(res, 400, { error: 'winner and last-place must be different horses' });
-      const validPosts = DERBY_FIELD.map(h => h.post);
-      if (!validPosts.includes(winPost) || !validPosts.includes(lastPost)) return send(res, 400, { error: 'invalid post' });
+      if (!winPos || !lastPos) return send(res, 400, { error: 'pick a winner and a last-place car' });
+      if (winPos === lastPos) return send(res, 400, { error: 'winner and last-place must be different cars' });
+      const validPositions = INDY_FIELD.map(c => c.pos);
+      if (!validPositions.includes(winPos) || !validPositions.includes(lastPos)) return send(res, 400, { error: 'invalid position' });
 
-      const existing = state.bestWorst.picks.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
-      const entry = { name, winPost, lastPost, submittedAt: new Date().toISOString() };
-      if (existing >= 0) state.bestWorst.picks[existing] = entry;
-      else state.bestWorst.picks.push(entry);
+      const existing = state.chickenDinner.picks.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
+      const entry = { name, winPos, lastPos, submittedAt: new Date().toISOString() };
+      if (existing >= 0) state.chickenDinner.picks[existing] = entry;
+      else state.chickenDinner.picks.push(entry);
       saveState();
       return send(res, 200, { ok: true });
     }
@@ -314,7 +267,7 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/picks/remove' && method === 'POST') {
       if (!checkAdmin(req)) return send(res, 401, { error: 'admin only' });
       const body = await readJsonBody(req);
-      state.bestWorst.picks = state.bestWorst.picks.filter(p => p.name !== body.name);
+      state.chickenDinner.picks = state.chickenDinner.picks.filter(p => p.name !== body.name);
       saveState();
       return send(res, 200, { ok: true });
     }
@@ -322,9 +275,9 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/admin/results' && method === 'POST') {
       if (!checkAdmin(req)) return send(res, 401, { error: 'admin only' });
       const body = await readJsonBody(req);
-      state.results.winnerPost = parseInt(body.winnerPost, 10) || null;
-      state.results.lastPost = parseInt(body.lastPost, 10) || null;
-      state.results.declared = !!(state.results.winnerPost && state.results.lastPost);
+      state.results.winnerPos = parseInt(body.winnerPos, 10) || null;
+      state.results.lastPos = parseInt(body.lastPos, 10) || null;
+      state.results.declared = !!(state.results.winnerPos && state.results.lastPos);
       saveState();
       return send(res, 200, { ok: true, results: state.results });
     }
@@ -337,24 +290,22 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { ok: true });
     }
 
-    if (pathname === '/api/admin/scratch' && method === 'POST') {
+    if (pathname === '/api/admin/withdrawn' && method === 'POST') {
       if (!checkAdmin(req)) return send(res, 401, { error: 'admin only' });
       const body = await readJsonBody(req);
-      state.scratched = (body.posts || []).map(n => parseInt(n, 10)).filter(Boolean);
+      state.withdrawn = (body.positions || []).map(n => parseInt(n, 10)).filter(Boolean);
       saveState();
-      return send(res, 200, { ok: true, scratched: state.scratched });
+      return send(res, 200, { ok: true, withdrawn: state.withdrawn });
     }
 
     if (pathname === '/api/admin/reset-all' && method === 'POST') {
       if (!checkAdmin(req)) return send(res, 401, { error: 'admin only' });
       state = {
         randomPool: { players: [], drawn: false },
-        bestWorst: { picks: [] },
-        results: { winnerPost: null, lastPost: null, declared: false },
+        chickenDinner: { picks: [] },
+        results: { winnerPos: null, lastPos: null, declared: false },
         oddsOverride: {},
-        scratched: [],
-        liveOdds: state.liveOdds,
-        liveOddsUpdatedAt: state.liveOddsUpdatedAt,
+        withdrawn: [],
       };
       saveState();
       return send(res, 200, { ok: true });
@@ -368,7 +319,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log('\n🌹 Derby Party server running');
+  console.log('\n🏁 Indy 500 Party server running');
   console.log(`   Local:    http://localhost:${PORT}`);
   const ifaces = os.networkInterfaces();
   for (const name of Object.keys(ifaces)) {

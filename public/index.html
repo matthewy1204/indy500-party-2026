@@ -4,29 +4,30 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=0" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="Derby Party" />
-<title>Derby Party — 2026</title>
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23F8F4E6' rx='20'/%3E%3Ctext y='.9em' font-size='80' x='10'%3E🌹%3C/text%3E%3C/svg%3E" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Indy 500 Party" />
+<title>Indy 500 Party — 2026</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230A0A0A' rx='20'/%3E%3Ctext y='.9em' font-size='80' x='10'%3E🏁%3C/text%3E%3C/svg%3E" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏁%3C/text%3E%3C/svg%3E" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    --bg: #F8F4E6;
+    --bg: #0A0A0A;
     --panel: #FFFFFF;
-    --crimson: #8C1C2A;
-    --crimson-dark: #6B1520;
-    --gold: #C5A059;
-    --gold-soft: rgba(197, 160, 89, 0.15);
-    --ink: #2C2621;
-    --muted: #7E7569;
-    --line: rgba(197, 160, 89, 0.4);
-    --green: #2B7A4B;
-    --red: #AB342E;
+    --panel-dark: #161616;
+    --red: #E51030;
+    --red-dark: #B30D26;
+    --gold: #FFC72C;
+    --gold-soft: rgba(255, 199, 44, 0.12);
+    --ink: #1A1A1A;
+    --muted: #6B6B6B;
+    --line-soft: #E5E5E5;
+    --green: #2E7D32;
+    --silver: #C0C0C0;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 20px);
     font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
@@ -35,131 +36,163 @@
   body {
     margin: 0; background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; line-height: 1.45;
     padding-bottom: calc(90px + var(--safe-bottom)); -webkit-tap-highlight-color: transparent;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
   }
-  
-  h1, h2, h3 { font-family: "Playfair Display", Georgia, serif; font-weight: 700; letter-spacing: 0.01em; margin: 0 0 0.4em; }
-  h1 { font-size: clamp(28px, 5vw, 44px); color: var(--panel); text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-  h2 { font-size: clamp(20px, 3vw, 24px); color: var(--crimson-dark); border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
-  h3 { font-size: 18px; color: var(--crimson); text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
-  
-  a { color: var(--crimson); text-decoration: none; border-bottom: 1px dotted var(--crimson); font-weight: 600; }
-  a:hover { color: var(--crimson-dark); }
+
+  h1, h2, h3 { font-family: "Oswald", "Inter", sans-serif; font-weight: 700; letter-spacing: 0.02em; margin: 0 0 0.4em; text-transform: uppercase; }
+  h1 { font-size: clamp(28px, 5vw, 44px); color: var(--panel); }
+  h2 { font-size: clamp(20px, 3vw, 26px); color: var(--ink); border-bottom: 2px solid var(--red); padding-bottom: 8px; margin-bottom: 16px; letter-spacing: 0.08em; text-align: center; }
+  h3 { font-size: 14px; color: var(--red); letter-spacing: 0.12em; text-align: center; }
+
+  a { color: var(--red); text-decoration: none; border-bottom: 1px dotted var(--red); font-weight: 600; }
+  a:hover { color: var(--red-dark); }
+
+  /* checker stripe — racing accent */
+  .checker {
+    height: 14px;
+    background: repeating-conic-gradient(#fff 0% 25%, #000 0% 50%) 0 0 / 14px 14px;
+  }
 
   header.hero {
-    background: var(--crimson);
-    color: var(--panel); padding: calc(28px + var(--safe-top)) 20px 36px; text-align: center;
-    position: relative; overflow: hidden; border-bottom: 4px solid var(--gold);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background: var(--panel-dark);
+    color: var(--panel);
+    padding: calc(20px + var(--safe-top)) 20px 0; text-align: center;
+    position: relative; overflow: hidden;
+    border-bottom: 4px solid var(--red);
   }
-  header.hero::before { content: "🏇"; position: absolute; left: 12px; top: calc(8px + var(--safe-top)); font-size: 30px; opacity: 0.2; }
-  header.hero::after { content: "🏇"; position: absolute; right: 12px; bottom: 8px; font-size: 32px; opacity: 0.2; transform: scaleX(-1); }
-  header.hero h1 { margin: 0 0 4px; font-weight: 800; font-style: italic; }
-  header.hero .sub { font-style: italic; opacity: 0.9; font-size: 15px; font-family: "Playfair Display", Georgia, serif; }
-  header.hero .date { margin-top: 12px; font-weight: 700; letter-spacing: 0.08em; font-size: 12px; color: var(--gold); text-transform: uppercase; }
+  header.hero .label { font-family: "Oswald", sans-serif; font-weight: 600; font-size: 11px; color: var(--gold); letter-spacing: 0.28em; text-transform: uppercase; margin-bottom: 4px; }
+  header.hero h1 { margin: 0 0 6px; font-weight: 700; letter-spacing: 0.04em; }
+  header.hero .sub { font-size: 12px; color: var(--silver); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; }
+  header.hero .date { margin: 14px auto 0; font-weight: 700; letter-spacing: 0.14em; font-size: 12px; color: var(--gold); text-transform: uppercase; padding: 10px 24px 0; border-top: 1px solid rgba(255,255,255,0.15); display: inline-block; max-width: 90%; }
+  header.hero .checker { margin-top: 22px; }
 
   nav.tabs {
     position: fixed; bottom: 0; left: 0; right: 0;
-    background: rgba(253, 251, 247, 0.95); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background: var(--panel-dark);
     display: flex; justify-content: space-around; padding-bottom: var(--safe-bottom);
-    border-top: 1px solid var(--line); z-index: 100;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    border-top: 3px solid var(--red); z-index: 100;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.4);
   }
   nav.tabs button {
-    flex: 1; padding: 12px 0 8px; background: transparent; border: none; color: var(--muted); 
-    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    flex: 1; padding: 12px 0 8px; background: transparent; border: none; color: var(--silver);
+    font-family: "Oswald", sans-serif; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
     display: flex; flex-direction: column; align-items: center; gap: 4px;
-    transition: all 0.2s; cursor: pointer;
+    transition: all 0.2s; cursor: pointer; position: relative;
   }
-  nav.tabs button.active { color: var(--crimson); }
-  nav.tabs button .icon { font-size: 22px; filter: grayscale(100%) opacity(0.5); transition: all 0.2s; margin-bottom: 2px; }
-  nav.tabs button.active .icon { filter: none; transform: scale(1.1); opacity: 1; }
+  nav.tabs button.active { color: var(--gold); }
+  nav.tabs button.active::before { content: ""; position: absolute; top: -3px; left: 20%; right: 20%; height: 3px; background: var(--gold); }
+  nav.tabs button .icon { font-size: 22px; opacity: 0.55; transition: all 0.2s; margin-bottom: 2px; }
+  nav.tabs button.active .icon { transform: scale(1.1); opacity: 1; }
 
   main { max-width: 600px; margin: 0 auto; padding: 20px 16px; }
   section.tab-pane { display: none; animation: fadeIn 0.3s ease-out; }
   section.tab-pane.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-  .card { 
-    background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 20px; margin-bottom: 16px; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03), inset 0 0 0 1px rgba(197, 160, 89, 0.2); 
+  .card {
+    background: var(--panel); border-radius: 8px; padding: 20px; margin-bottom: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    border-top: 4px solid var(--red);
   }
 
   .list-card {
-    background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 14px; 
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
-    transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    background: var(--panel); border: 1px solid var(--line-soft); border-radius: 6px; padding: 10px 12px;
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+    transition: all 0.2s;
   }
-  .list-card.scratched { opacity: 0.5; text-decoration: line-through; background: var(--bg); }
-  .list-card.winner { border: 2px solid var(--green); background: rgba(43, 122, 75, 0.05); }
-  .list-card.last { border: 2px solid var(--red); background: rgba(171, 52, 46, 0.05); }
+  .list-card.withdrawn { opacity: 0.45; text-decoration: line-through; background: #F5F5F5; }
+  .list-card.winner { border: 2px solid var(--green); background: rgba(46, 125, 50, 0.06); }
+  .list-card.last { border: 2px solid var(--red); background: rgba(229, 16, 48, 0.06); }
 
-  .odds-badge { display: inline-block; padding: 6px 12px; background: var(--gold-soft); color: var(--crimson-dark); border: 1px solid var(--gold); border-radius: 4px; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 16px; text-shadow: 0 1px 0 rgba(255,255,255,0.5); }
-  .odds-live { background: var(--gold); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+  /* Starting-position tile — looks like a grid marker */
+  .pos-tile {
+    width: 42px; height: 42px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Oswald", sans-serif; font-weight: 700; font-size: 20px;
+    background: var(--panel-dark); color: var(--panel);
+    border-radius: 6px;
+    border: 2px solid var(--gold);
+  }
+  .pos-tile.pole { background: var(--red); border-color: var(--gold); color: var(--gold); }
+
+  .odds-badge {
+    display: inline-block; padding: 7px 10px; background: var(--panel-dark); color: var(--gold);
+    border-radius: 4px; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 15px;
+    font-family: "Oswald", sans-serif; letter-spacing: 0.04em;
+    min-width: 56px; text-align: center;
+  }
+  .odds-badge.override { background: var(--red); color: #fff; }
 
   button.btn, .btn {
     display: inline-flex; align-items: center; justify-content: center;
-    padding: 12px 20px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
-    background: var(--crimson); color: #fff; border: 1px solid var(--crimson-dark); border-radius: 4px; cursor: pointer;
-    transition: all 0.15s; font-family: inherit; min-height: 44px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 12px 20px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+    background: var(--red); color: #fff; border: none; border-radius: 4px; cursor: pointer;
+    transition: all 0.15s; font-family: "Oswald", sans-serif; min-height: 44px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);
   }
-  button.btn:active, .btn:active { transform: scale(0.98); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-  button.btn.secondary { background: var(--panel); color: var(--crimson); border: 1px solid var(--crimson); }
-  button.btn.ghost { background: transparent; color: var(--crimson); border: 1px solid var(--crimson); box-shadow: none; }
-  button.btn.ghost:hover { background: var(--gold-soft); }
-  button.btn.danger { background: var(--red); color: #fff; border-color: #8A2520; }
+  button.btn:active, .btn:active { transform: scale(0.97); }
+  button.btn:hover { background: var(--red-dark); }
+  button.btn.secondary { background: var(--panel); color: var(--ink); border: 2px solid var(--ink); }
+  button.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line-soft); box-shadow: none; }
+  button.btn.ghost:hover { background: var(--gold-soft); border-color: var(--gold); }
+  button.btn.danger { background: #8B0000; color: #fff; }
   button.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   input[type=text], input[type=password], input[type=number], select {
-    padding: 12px 14px; font-size: 16px; border: 1px solid var(--line); border-radius: 4px;
+    padding: 12px 14px; font-size: 16px; border: 1px solid var(--line-soft); border-radius: 4px;
     background: var(--panel); color: var(--ink); font-family: inherit; min-width: 0; min-height: 44px;
   }
-  input:focus, select:focus { outline: none; border-color: var(--crimson); box-shadow: 0 0 0 2px rgba(140, 28, 42, 0.2); }
+  input:focus, select:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(229, 16, 48, 0.15); }
   option { background: var(--panel); color: var(--ink); }
 
   .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
   .row > * { min-width: 0; }
   .grow { flex: 1; min-width: 140px; }
 
-  .pill { display: inline-block; padding: 4px 10px; border-radius: 4px; background: var(--gold-soft); border: 1px solid var(--gold); color: var(--crimson-dark); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 6px; }
-  .pill.green { background: rgba(43, 122, 75, 0.1); border-color: var(--green); color: var(--green); }
-  .pill.red { background: rgba(171, 52, 46, 0.1); border-color: var(--red); color: var(--red); }
+  .pill { display: inline-block; padding: 4px 10px; border-radius: 4px; background: var(--gold-soft); border: 1px solid var(--gold); color: var(--ink); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-left: 6px; font-family: "Oswald", sans-serif; }
+  .pill.green { background: rgba(46, 125, 50, 0.1); border-color: var(--green); color: var(--green); }
+  .pill.red { background: rgba(229, 16, 48, 0.1); border-color: var(--red); color: var(--red); }
 
-  ul.player-list { list-style: none; padding: 0; margin: 16px 0 0; }
-  .empty { color: var(--muted); font-style: italic; padding: 16px 0; text-align: center; font-family: "Playfair Display", Georgia, serif; }
-  .help { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.5; text-align: center; }
+  ul.player-list { list-style: none; padding: 0; margin: 14px 0 0; }
+  .empty { color: var(--muted); font-style: italic; padding: 16px 0; text-align: center; }
+  .help { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.55; text-align: center; }
   .error { color: var(--red); font-size: 13px; margin-top: 6px; font-weight: 600; text-align: center; }
   .success { color: var(--green); font-size: 13px; margin-top: 6px; font-weight: 600; text-align: center; }
 
-  .pay-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; justify-content: center; }
-  .pay-row a { background: var(--panel); color: var(--ink); padding: 12px 16px; border-radius: 4px; border: 1px solid var(--line); font-size: 13px; font-weight: 700; text-align: center; flex: 1; min-width: 120px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); text-transform: uppercase; letter-spacing: 0.05em; }
-  .pay-row a:hover { border-color: var(--crimson); color: var(--crimson); }
+  .pay-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; justify-content: center; }
+  .pay-row a { background: var(--panel); color: var(--ink); padding: 12px 16px; border-radius: 4px; border: 1px solid var(--line-soft); font-size: 12px; font-weight: 700; text-align: center; flex: 1; min-width: 120px; text-transform: uppercase; letter-spacing: 0.1em; font-family: "Oswald", sans-serif; }
+  .pay-row a:hover { border-color: var(--red); color: var(--red); }
 
-  .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; }
-  .stat { background: var(--bg); border: 1px solid var(--line); padding: 16px; border-radius: 6px; text-align: center; }
-  .stat .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; margin-bottom: 6px; }
-  .stat .value { font-size: 26px; font-family: "Playfair Display", Georgia, serif; font-weight: 700; color: var(--crimson-dark); font-variant-numeric: tabular-nums; }
+  .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 16px 0; }
+  .stat { background: var(--bg); color: var(--panel); padding: 14px; border-radius: 6px; text-align: center; border-left: 3px solid var(--red); }
+  .stat .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--gold); font-weight: 700; margin-bottom: 4px; font-family: "Oswald", sans-serif; }
+  .stat .value { font-size: 24px; font-family: "Oswald", sans-serif; font-weight: 700; color: var(--panel); font-variant-numeric: tabular-nums; }
 
-  details.admin-block { border: 1px solid var(--line); padding: 16px; border-radius: 6px; margin-top: 16px; background: var(--bg); }
-  details.admin-block summary { cursor: pointer; font-weight: 700; color: var(--crimson-dark); outline: none; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 14px; }
+  details.admin-block { border: 1px solid var(--line-soft); padding: 14px; border-radius: 6px; margin-top: 14px; background: #FAFAFA; }
+  details.admin-block summary { cursor: pointer; font-weight: 700; color: var(--ink); outline: none; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.1em; font-size: 13px; font-family: "Oswald", sans-serif; }
 
   .winner-banner {
-    background: var(--bg);
+    background: var(--panel-dark);
+    color: var(--panel); padding: 24px 16px; border-radius: 8px; margin-bottom: 20px; text-align: center;
     border: 2px solid var(--gold);
-    color: var(--ink); padding: 24px; border-radius: 8px; margin-bottom: 24px; text-align: center;
-    position: relative; overflow: hidden;
+    position: relative;
   }
-  .winner-banner::before { content: "🌹"; position: absolute; left: 16px; top: 16px; font-size: 24px; opacity: 0.5; }
-  .winner-banner::after { content: "🌹"; position: absolute; right: 16px; top: 16px; font-size: 24px; opacity: 0.5; }
-  .winner-banner h2 { color: var(--crimson-dark); border: 0; padding: 0; margin: 0 0 8px; font-size: 28px; }
+  .winner-banner h2 { color: var(--gold); border: 0; padding: 0; margin: 0 0 6px; font-size: 26px; }
+  .winner-banner .pool-line { font-weight: 600; font-size: 16px; color: var(--panel); }
+  .winner-banner .pts-line { font-family: "Oswald", sans-serif; margin-top: 8px; color: var(--gold); font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { padding: 12px 8px; text-align: left; border-bottom: 1px solid var(--line); }
-  th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 8px 6px; text-align: left; border-bottom: 1px solid var(--line-soft); }
+  th { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; font-family: "Oswald", sans-serif; }
+
+  .odds-explainer {
+    background: var(--bg); color: var(--panel); padding: 14px 16px; border-radius: 6px;
+    border-left: 3px solid var(--gold); font-size: 13px; line-height: 1.6; margin-bottom: 16px;
+  }
+  .odds-explainer strong { color: var(--gold); font-family: "Oswald", sans-serif; letter-spacing: 0.04em; }
 
   @media (min-width: 768px) {
-    nav.tabs { top: 0; bottom: auto; padding-bottom: 0; border-top: none; border-bottom: 1px solid var(--line); flex-direction: row; justify-content: center; gap: 20px; }
+    nav.tabs { top: 0; bottom: auto; padding-bottom: 0; border-top: none; border-bottom: 3px solid var(--red); flex-direction: row; justify-content: center; gap: 20px; }
     nav.tabs button { flex: 0 0 auto; padding: 16px 24px; flex-direction: row; font-size: 12px; }
+    nav.tabs button.active::before { top: auto; bottom: -3px; }
     nav.tabs button .icon { margin-bottom: 0; }
     body { padding-bottom: 40px; padding-top: 70px; }
   }
@@ -168,37 +201,40 @@
 <body>
 
 <header class="hero">
-  <h1 id="party-title">Kentucky Derby Party</h1>
-  <div class="sub">152nd Run for the Roses</div>
-  <div class="date" id="party-date">Saturday, May 2 — 6:57 p.m. ET</div>
+  <div class="label">110th Running</div>
+  <h1 id="party-title">Indy 500 Party</h1>
+  <div class="sub" id="party-sub">Greatest Spectacle in Racing</div>
+  <div class="date" id="party-date">Sunday · May 24 · 12:45 ET</div>
+  <div class="checker"></div>
 </header>
 
 <nav class="tabs">
-  <button class="active" data-tab="odds"><span class="icon">🌹</span>Odds</button>
-  <button data-tab="random"><span class="icon">🎩</span>Random</button>
-  <button data-tab="bestworst"><span class="icon">🏆</span>Picks</button>
-  <button data-tab="results"><span class="icon">🏇</span>Results</button>
+  <button class="active" data-tab="odds"><span class="icon">🏁</span>Odds</button>
+  <button data-tab="random"><span class="icon">🪖</span>Random</button>
+  <button data-tab="picks"><span class="icon">🍗</span>Dinner</button>
+  <button data-tab="results"><span class="icon">🏎️</span>Finish</button>
   <button data-tab="admin"><span class="icon">🔑</span>Admin</button>
 </nav>
 
 <main>
-  <!-- LIVE ODDS -->
+  <!-- ODDS -->
   <section class="tab-pane active" id="tab-odds">
     <div class="card">
-      <h2>The Championship Field</h2>
-      <div class="row" style="justify-content: center; margin-bottom: 16px;">
-        <button class="btn ghost" id="refresh-odds" style="padding: 8px 16px; min-height: 36px; font-size: 12px;">Refresh Live Odds</button>
+      <h2>The Starting Grid</h2>
+
+      <div class="odds-explainer">
+        <strong>How to read the odds.</strong> "4-1" means roughly a 1-in-5 chance to win. Lower number = bigger favorite. Higher = longer shot. Lines are baked from Monday's practice data and are informational only — pool payouts don't change. Use them to pick smart in <strong>Chicken Dinner</strong>.
       </div>
-      <div id="odds-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-      <div class="help" id="odds-status" style="margin-top:20px; border-top: 1px solid var(--line); padding-top: 16px;">Loading…</div>
+
+      <div id="odds-list" style="display:flex; flex-direction:column; gap:6px;"></div>
     </div>
   </section>
 
   <!-- RANDOM POOL -->
   <section class="tab-pane" id="tab-random">
     <div class="card">
-      <h2>Random Paddock Pool</h2>
-      <p class="help" style="color: var(--ink); font-size: 15px;">Drop your name in the hat. The host will draw to randomly assign each person a horse — whoever drew the actual winning horse takes the whole pool. 🥂</p>
+      <h2>Pit Lane Random Pool</h2>
+      <p class="help" style="color: var(--ink); font-size: 14px;">Drop your name in the helmet. The host runs the draw and each person is randomly assigned a car. Whoever drew the actual winner takes the entire pool. 🥛</p>
       <div class="stat-grid">
         <div class="stat"><div class="label">Entry Fee</div><div class="value">$<span id="rp-buyin">10</span></div></div>
         <div class="stat"><div class="label">Total Pool</div><div class="value">$<span id="rp-pool">0</span></div></div>
@@ -216,37 +252,37 @@
         <div class="pay-row" id="pay-row-rp"></div>
       </div>
 
-      <h3 style="margin-top: 32px;">The Draw</h3>
+      <h3 style="margin-top: 28px;">The Draw</h3>
       <ul class="player-list" id="rp-list"></ul>
     </div>
   </section>
 
-  <!-- BEST & WORST -->
-  <section class="tab-pane" id="tab-bestworst">
+  <!-- CHICKEN DINNER -->
+  <section class="tab-pane" id="tab-picks">
     <div class="card">
-      <h2>Best &amp; Worst</h2>
-      <p class="help" style="color: var(--ink); font-size: 15px;">Pick your winner. Pick your loser. Score 1 point per correct pick. Highest score takes the pool. Ties split it.</p>
+      <h2>Chicken Dinner</h2>
+      <p class="help" style="color: var(--ink); font-size: 14px;">Pick the winner. Pick the last car. 1 point per correct pick. Highest score takes the pool. Ties split.</p>
       <div class="stat-grid">
-        <div class="stat"><div class="label">Entry Fee</div><div class="value">$<span id="bw-buyin">10</span></div></div>
-        <div class="stat"><div class="label">Total Pool</div><div class="value">$<span id="bw-pool">0</span></div></div>
+        <div class="stat"><div class="label">Entry Fee</div><div class="value">$<span id="cd-buyin">10</span></div></div>
+        <div class="stat"><div class="label">Total Pool</div><div class="value">$<span id="cd-pool">0</span></div></div>
       </div>
 
-      <div class="row" style="margin-bottom:12px;">
-        <input type="text" id="bw-name" placeholder="Your full name" class="grow" maxlength="40" />
+      <div class="row" style="margin-bottom:10px;">
+        <input type="text" id="cd-name" placeholder="Your full name" class="grow" maxlength="40" />
       </div>
       <div class="row">
-        <select id="bw-win" class="grow"><option value="">🏆 Pick the Winner…</option></select>
-        <select id="bw-last" class="grow"><option value="">🐢 Pick Dead Last…</option></select>
-        <button class="btn" id="bw-submit" style="width: 100%;">Submit Picks</button>
+        <select id="cd-win" class="grow"><option value="">🍗 Winner Winner Chicken Dinner…</option></select>
+        <select id="cd-last" class="grow"><option value="">❤️ Winner in Our Hearts…</option></select>
+        <button class="btn" id="cd-submit" style="width: 100%;">Submit Picks</button>
       </div>
-      <div class="error" id="bw-error"></div>
-      <div class="success" id="bw-success"></div>
-      
-      <div class="help" style="margin-top: 24px;">Settle your buy-in with the host:</div>
-      <div class="pay-row" id="pay-row-bw"></div>
+      <div class="error" id="cd-error"></div>
+      <div class="success" id="cd-success"></div>
 
-      <h3 style="margin-top:32px;">Official Entries</h3>
-      <ul class="player-list" id="bw-list"></ul>
+      <div class="help" style="margin-top: 20px;">Settle your buy-in with the host:</div>
+      <div class="pay-row" id="pay-row-cd"></div>
+
+      <h3 style="margin-top:28px;">Official Entries</h3>
+      <ul class="player-list" id="cd-list"></ul>
     </div>
   </section>
 
@@ -267,10 +303,10 @@
       </div>
 
       <details class="admin-block" open>
-        <summary>Run the Hat Draw</summary>
-        <p class="help" style="text-align: left;">Lock in the random pool entries and assign horses.</p>
+        <summary>Run the Pit Lane Draw</summary>
+        <p class="help" style="text-align: left;">Lock in the random pool entries and assign cars.</p>
         <div class="row">
-          <button class="btn" id="admin-draw">🎲 Draw Horses</button>
+          <button class="btn" id="admin-draw">🎲 Draw Cars</button>
           <button class="btn ghost" id="admin-rp-reset">Reset</button>
         </div>
       </details>
@@ -285,21 +321,21 @@
       </details>
 
       <details class="admin-block">
-        <summary>Override Live Odds</summary>
+        <summary>Override Pre-Race Odds</summary>
         <table id="admin-odds-table">
-          <thead><tr><th>Post</th><th>Horse</th><th>Override</th></tr></thead>
+          <thead><tr><th>Pos</th><th>Driver</th><th>Override</th></tr></thead>
           <tbody></tbody>
         </table>
-        <div class="row" style="margin-top:16px;">
+        <div class="row" style="margin-top:14px;">
           <button class="btn" id="admin-odds-save">Save Odds</button>
           <button class="btn ghost" id="admin-odds-clear">Clear All</button>
         </div>
       </details>
 
       <details class="admin-block">
-        <summary>Mark Scratched Horses</summary>
-        <div id="admin-scratch-list"></div>
-        <button class="btn" id="admin-scratch-save" style="margin-top:16px; width:100%;">Save Scratches</button>
+        <summary>Mark Withdrawn Cars</summary>
+        <div id="admin-withdrawn-list"></div>
+        <button class="btn" id="admin-withdrawn-save" style="margin-top:14px; width:100%;">Save Withdrawals</button>
       </details>
 
       <details class="admin-block">
@@ -314,7 +350,7 @@
   let DATA = null;
   let activeTab = 'odds';
 
-  const ADMIN_PIN_KEY = 'derby-admin-pin';
+  const ADMIN_PIN_KEY = 'indy-admin-pin';
   function getAdminPin() { return localStorage.getItem(ADMIN_PIN_KEY) || ''; }
   function setAdminPin(p) { localStorage.setItem(ADMIN_PIN_KEY, p); }
 
@@ -347,20 +383,21 @@
 
   function render() {
     if (!DATA) return;
-    const { config, field, state, bestWorstStandings, randomWinner } = DATA;
+    const { config, field, state, standings, randomWinner } = DATA;
 
     document.getElementById('party-title').textContent = config.partyName;
-    document.getElementById('party-date').textContent = config.derbyDate;
+    document.getElementById('party-sub').textContent = config.raceSub;
+    document.getElementById('party-date').textContent = config.raceDate;
     document.getElementById('rp-buyin').textContent = config.randomPoolBuyIn;
-    document.getElementById('bw-buyin').textContent = config.bestWorstBuyIn;
+    document.getElementById('cd-buyin').textContent = config.chickenDinnerBuyIn;
 
     renderPayRow('pay-row-rp', config);
-    renderPayRow('pay-row-bw', config);
+    renderPayRow('pay-row-cd', config);
 
     renderOdds(field, state);
     renderRandomPool(field, state, config);
-    renderBestWorst(field, state, config, bestWorstStandings);
-    renderResults(field, state, bestWorstStandings, randomWinner, config);
+    renderPicks(field, state, config, standings);
+    renderResults(field, state, standings, randomWinner, config);
     renderAdmin(field, state);
   }
 
@@ -369,53 +406,42 @@
     const venmo = `https://venmo.com/${(config.venmoHandle || '').replace(/^@/, '')}`;
     el.innerHTML = `
       <a href="${venmo}" target="_blank">Venmo</a>
-      <a href="mailto:${config.zelleContact}?subject=Derby%20Buy-in">Zelle</a>
+      <a href="mailto:${config.zelleContact}?subject=Indy%20500%20Buy-in">Zelle</a>
     `;
   }
 
-  function getDisplayOdds(post, state) {
-    if (state.oddsOverride && state.oddsOverride[post]) return { value: state.oddsOverride[post], source: 'override' };
-    if (state.liveOdds && state.liveOdds[post]) return { value: state.liveOdds[post], source: 'live' };
-    return null;
+  function getDisplayOdds(pos, state, defaultOdds) {
+    if (state.oddsOverride && state.oddsOverride[pos]) return { value: state.oddsOverride[pos], source: 'override' };
+    return { value: defaultOdds, source: 'pre-race' };
   }
 
   function renderOdds(field, state) {
     const list = document.querySelector('#odds-list');
     list.innerHTML = '';
-    field.forEach(h => {
+    field.forEach(c => {
       const card = document.createElement('div');
       card.className = 'list-card';
-      if (state.scratched.includes(h.post)) card.classList.add('scratched');
-      if (state.results.declared && state.results.winnerPost === h.post) card.classList.add('winner');
-      if (state.results.declared && state.results.lastPost === h.post) card.classList.add('last');
-      
-      const live = getDisplayOdds(h.post, state);
-      const liveCell = live
-        ? `<div class="odds-badge ${live.source === 'live' ? 'odds-live' : ''}">${live.value}${live.source === 'override' ? ' *' : ''}</div>`
-        : `<div class="odds-badge">—</div>`;
-        
+      if (state.withdrawn.includes(c.pos)) card.classList.add('withdrawn');
+      if (state.results.declared && state.results.winnerPos === c.pos) card.classList.add('winner');
+      if (state.results.declared && state.results.lastPos === c.pos) card.classList.add('last');
+
+      const odds = getDisplayOdds(c.pos, state, c.preRace);
+      const oddsCell = `<div class="odds-badge ${odds.source === 'override' ? 'override' : ''}">${odds.value}${odds.source === 'override' ? ' *' : ''}</div>`;
+
       card.innerHTML = `
-        <div style="display:flex; gap:16px; align-items:center;">
-          <div style="font-size:26px; font-weight:700; color:var(--gold); width:28px; text-align:center; font-family: 'Playfair Display', serif;">${h.post}</div>
-          <div>
-            <div style="font-size:17px; font-weight:700; color:var(--crimson-dark);">${h.name}${state.scratched.includes(h.post) ? ' <span class="pill red" style="margin-left:8px;">scratched</span>' : ''}</div>
-            <div style="font-size:12px; color:var(--muted); margin-top:4px; font-weight:500;">J: ${h.jockey} <span style="margin:0 4px; color:var(--line);">|</span> T: ${h.trainer}</div>
+        <div style="display:flex; gap:12px; align-items:center; flex:1; min-width:0;">
+          <div class="pos-tile ${c.pos === 1 ? 'pole' : ''}">${c.pos}</div>
+          <div style="min-width:0; flex:1;">
+            <div style="font-size:15px; font-weight:700; color:var(--ink); font-family:'Oswald',sans-serif; letter-spacing:0.02em; text-transform:uppercase;">${escape(c.name)}${state.withdrawn.includes(c.pos) ? ' <span class="pill red">withdrew</span>' : ''}</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:2px;">#${escape(c.car)} · ${escape(c.team)} · ${escape(c.engine)}</div>
           </div>
         </div>
-        <div style="text-align:center; min-width: 60px;">
-          <div style="font-size:10px; color:var(--muted); margin-bottom:4px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">ML: ${h.ml}</div>
-          ${liveCell}
+        <div style="text-align:center;">
+          ${oddsCell}
         </div>
       `;
       list.appendChild(card);
     });
-    const status = document.getElementById('odds-status');
-    if (state.liveOddsUpdatedAt) {
-      const d = new Date(state.liveOddsUpdatedAt);
-      status.textContent = 'Live odds last updated ' + d.toLocaleTimeString() + ' from TwinSpires.';
-    } else {
-      status.textContent = 'No live odds yet — showing morning line. Click Refresh to fetch.';
-    }
   }
 
   function renderRandomPool(field, state, config) {
@@ -427,19 +453,19 @@
     const list = document.getElementById('rp-list');
     list.innerHTML = '';
     if (players.length === 0) {
-      list.innerHTML = '<li class="empty">The hat is empty. Be the first to join!</li>';
+      list.innerHTML = '<li class="empty">Helmet is empty. Be the first to join!</li>';
       return;
     }
     players.forEach(p => {
       const li = document.createElement('li');
       li.className = 'list-card';
-      const horse = p.assignedPost ? field.find(h => h.post === p.assignedPost) : null;
+      const car = p.assignedPos ? field.find(c => c.pos === p.assignedPos) : null;
       li.innerHTML = `
-        <div class="nameblock" style="flex:1;">
-          <strong style="font-size:16px; color:var(--crimson-dark);">${escape(p.name)}</strong>
-          ${horse ? `<div class="small" style="color:var(--muted); margin-top:4px; font-size:13px;">drew <span style="font-weight:700; color:var(--crimson);">#${horse.post} ${escape(horse.name)}</span></div>` : '<div class="small" style="color:var(--gold); margin-top:4px; font-style:italic;">awaiting the draw…</div>'}
+        <div style="flex:1; min-width:0;">
+          <strong style="font-size:15px; color:var(--ink); font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:0.02em;">${escape(p.name)}</strong>
+          ${car ? `<div style="color:var(--muted); margin-top:4px; font-size:12px;">drew <span style="font-weight:700; color:var(--red);">P${car.pos} · #${escape(car.car)} ${escape(car.name)}</span></div>` : '<div style="color:var(--gold); margin-top:4px; font-size:12px; font-style:italic;">awaiting the draw…</div>'}
         </div>
-        ${state.randomPool.drawn ? '' : `<button class="btn ghost" style="padding:6px 12px; font-size:11px; min-height:auto;" data-remove="${escape(p.name)}">Remove</button>`}
+        ${state.randomPool.drawn ? '' : `<button class="btn ghost" style="padding:6px 12px; font-size:10px; min-height:auto;" data-remove="${escape(p.name)}">Remove</button>`}
       `;
       list.appendChild(li);
     });
@@ -451,29 +477,29 @@
     });
   }
 
-  function renderBestWorst(field, state, config, standings) {
-    const picks = state.bestWorst.picks;
-    document.getElementById('bw-count').textContent = picks.length;
-    document.getElementById('bw-pool').textContent = (picks.length * config.bestWorstBuyIn).toLocaleString();
+  function renderPicks(field, state, config, standings) {
+    const picks = state.chickenDinner.picks;
+    document.getElementById('cd-pool').textContent = (picks.length * config.chickenDinnerBuyIn).toLocaleString();
 
-    ['bw-win', 'bw-last', 'admin-winner', 'admin-last'].forEach(id => {
+    ['cd-win', 'cd-last', 'admin-winner', 'admin-last'].forEach(id => {
       const sel = document.getElementById(id);
       if (!sel) return;
       const current = sel.value;
-      sel.innerHTML = '';
-      const placeholder = sel.dataset.placeholder || sel.querySelector('option')?.textContent || 'Pick…';
-      sel.innerHTML = `<option value="">${placeholder.startsWith('🏆') || placeholder.startsWith('🐢') ? placeholder : (id.includes('win') ? '🏆 Pick the Winner…' : '🐢 Pick Dead Last…')}</option>`;
-      field.forEach(h => {
-        if (state.scratched.includes(h.post)) return;
+      const placeholder = id === 'cd-win' ? '🍗 Winner Winner Chicken Dinner…' :
+                          id === 'cd-last' ? '❤️ Winner in Our Hearts…' :
+                          id === 'admin-winner' ? '🏆 Winner…' : '🐢 Last place…';
+      sel.innerHTML = `<option value="">${placeholder}</option>`;
+      field.forEach(c => {
+        if (state.withdrawn.includes(c.pos)) return;
         const opt = document.createElement('option');
-        opt.value = h.post;
-        opt.textContent = `#${h.post} ${h.name}`;
+        opt.value = c.pos;
+        opt.textContent = `P${c.pos} · #${c.car} ${c.name}`;
         sel.appendChild(opt);
       });
       sel.value = current;
     });
 
-    const list = document.getElementById('bw-list');
+    const list = document.getElementById('cd-list');
     list.innerHTML = '';
     if (picks.length === 0) {
       list.innerHTML = '<li class="empty">No picks submitted yet.</li>';
@@ -482,16 +508,16 @@
     picks.forEach(p => {
       const li = document.createElement('li');
       li.className = 'list-card';
-      const win = field.find(h => h.post === p.winPost);
-      const last = field.find(h => h.post === p.lastPost);
+      const win = field.find(c => c.pos === p.winPos);
+      const last = field.find(c => c.pos === p.lastPos);
       const standing = standings.find(s => s.name === p.name);
       const points = standing ? standing.points : null;
       li.innerHTML = `
-        <div class="nameblock" style="flex:1;">
-          <strong style="font-size:16px; color:var(--crimson-dark);">${escape(p.name)}</strong>
-          <div class="small" style="margin-top:6px; color:var(--muted); font-size:13px;">
-            <span style="display:inline-block; width:18px;">🏆</span> <span style="font-weight:600;">#${win.post}</span> ${escape(win.name)}<br>
-            <span style="display:inline-block; width:18px; margin-top:4px;">🐢</span> <span style="font-weight:600;">#${last.post}</span> ${escape(last.name)}
+        <div style="flex:1; min-width:0;">
+          <strong style="font-size:15px; color:var(--ink); font-family:'Oswald',sans-serif; text-transform:uppercase;">${escape(p.name)}</strong>
+          <div style="margin-top:5px; color:var(--muted); font-size:12px; line-height:1.6;">
+            <span style="display:inline-block; width:18px;">🍗</span> <span style="font-weight:600;">P${win.pos} · #${escape(win.car)}</span> ${escape(win.name)}<br>
+            <span style="display:inline-block; width:18px;">❤️</span> <span style="font-weight:600;">P${last.pos} · #${escape(last.car)}</span> ${escape(last.name)}
           </div>
         </div>
         <div style="text-align:right;">
@@ -512,59 +538,59 @@
         </div>`;
       return;
     }
-    const winner = field.find(h => h.post === state.results.winnerPost);
-    const last = field.find(h => h.post === state.results.lastPost);
+    const winner = field.find(c => c.pos === state.results.winnerPos);
+    const last = field.find(c => c.pos === state.results.lastPos);
 
     let html = '';
 
     html += `<div class="card">
-      <h2>🎩 Random Pool Winner</h2>
-      <p style="margin-bottom:20px; text-align:center;">Winning Horse: <strong style="color:var(--crimson-dark);">#${winner.post} ${escape(winner.name)}</strong></p>`;
+      <h2>🪖 Pit Lane Pool Winner</h2>
+      <p style="text-align:center; margin-bottom:18px;">Winning Car: <strong style="color:var(--red); font-family:'Oswald',sans-serif; text-transform:uppercase;">P${winner.pos} · #${escape(winner.car)} ${escape(winner.name)}</strong></p>`;
     if (randomWinner) {
       html += `<div class="winner-banner"><h2>🏆 ${escape(randomWinner.name)}</h2>
-        <div style="font-weight:600; font-size:16px; color:var(--ink);">Takes the $${(state.randomPool.players.length * config.randomPoolBuyIn).toLocaleString()} pool!</div></div>`;
+        <div class="pool-line">Takes the $${(state.randomPool.players.length * config.randomPoolBuyIn).toLocaleString()} pool!</div></div>`;
     } else if (state.randomPool.drawn) {
-      html += `<p class="empty" style="padding-top:0;">No one drew the winning horse. Pool rolls forward (or split it however you like 🥂).</p>`;
+      html += `<p class="empty">No one drew the winning car. Pool rolls forward (or split it however you like 🥛).</p>`;
     } else {
-      html += `<p class="empty" style="padding-top:0;">The hat draw was never run.</p>`;
+      html += `<p class="empty">The pit lane draw was never run.</p>`;
     }
     html += `</div>`;
 
     html += `<div class="card">
-      <h2>🏆 Best &amp; Worst Standings</h2>
-      <p style="margin-bottom:20px; text-align:center;">Winner: <strong style="color:var(--crimson-dark);">#${winner.post} ${escape(winner.name)}</strong><br>Dead Last: <strong style="color:var(--crimson-dark);">#${last.post} ${escape(last.name)}</strong></p>`;
+      <h2>🍗 Chicken Dinner Standings</h2>
+      <p style="text-align:center; margin-bottom:18px;">Winner: <strong style="color:var(--red);">P${winner.pos} · ${escape(winner.name)}</strong><br>Last: <strong style="color:var(--red);">P${last.pos} · ${escape(last.name)}</strong></p>`;
     if (standings.length === 0) {
-      html += `<p class="empty" style="padding-top:0;">No entries.</p>`;
+      html += `<p class="empty">No entries.</p>`;
     } else {
       const topScore = standings[0].points;
       const winners = standings.filter(s => s.points === topScore);
-      const pool = standings.length * config.bestWorstBuyIn;
+      const pool = standings.length * config.chickenDinnerBuyIn;
       const split = topScore > 0 && winners.length > 0 ? Math.floor(pool / winners.length) : 0;
 
       if (topScore > 0) {
         html += `<div class="winner-banner">
-          <h2 style="font-size:24px;">🏆 ${winners.map(w => escape(w.name)).join(' & ')}</h2>
-          <div style="font-weight:600; font-size:16px; color:var(--ink);">${winners.length > 1 ? `Split the $${pool.toLocaleString()} pool — $${split.toLocaleString()} each` : `Takes the $${pool.toLocaleString()} pool`}</div>
-          <div style="font-style:italic; font-family:'Playfair Display', serif; margin-top:8px; color:var(--crimson);">${topScore} of 2 picks correct</div>
+          <h2>🏆 ${winners.map(w => escape(w.name)).join(' & ')}</h2>
+          <div class="pool-line">${winners.length > 1 ? `Split the $${pool.toLocaleString()} pool — $${split.toLocaleString()} each` : `Takes the $${pool.toLocaleString()} pool`}</div>
+          <div class="pts-line">${topScore} of 2 picks correct</div>
         </div>`;
       } else {
-        html += `<p class="empty" style="padding-top:0;">Nobody got either pick right. Pool rolls forward.</p>`;
+        html += `<p class="empty">Nobody got either pick right. Pool rolls forward.</p>`;
       }
 
-      html += `<div style="display:flex; flex-direction:column; gap:10px;">`;
+      html += `<div style="display:flex; flex-direction:column; gap:8px;">`;
       standings.forEach(s => {
-        const w = field.find(h => h.post === s.winPost);
-        const l = field.find(h => h.post === s.lastPost);
+        const w = field.find(c => c.pos === s.winPos);
+        const l = field.find(c => c.pos === s.lastPos);
         const cls = s.points === topScore && topScore > 0 ? 'winner' : '';
         html += `<div class="list-card ${cls}">
           <div style="flex:1;">
-            <strong style="font-size:16px; color:var(--crimson-dark);">${escape(s.name)}</strong>
-            <div style="font-size:13px; margin-top:6px; color:var(--muted);">
-              ${s.winCorrect ? '✅' : '❌'} #${w.post} ${escape(w.name)}<br>
-              <span style="display:inline-block; margin-top:4px;">${s.lastCorrect ? '✅' : '❌'} #${l.post} ${escape(l.name)}</span>
+            <strong style="font-size:15px; color:var(--ink); font-family:'Oswald',sans-serif; text-transform:uppercase;">${escape(s.name)}</strong>
+            <div style="font-size:12px; margin-top:4px; color:var(--muted); line-height:1.6;">
+              ${s.winCorrect ? '✅' : '❌'} P${w.pos} · ${escape(w.name)}<br>
+              ${s.lastCorrect ? '✅' : '❌'} P${l.pos} · ${escape(l.name)}
             </div>
           </div>
-          <div style="font-size:24px; font-weight:700; font-family:'Playfair Display', serif; color:var(--gold); padding-left:16px;">${s.points}</div>
+          <div style="font-family:'Oswald',sans-serif; font-size:24px; font-weight:700; color:var(--gold); padding-left:14px;">${s.points}</div>
         </div>`;
       });
       html += `</div>`;
@@ -586,25 +612,25 @@
 
     const tbody = document.querySelector('#admin-odds-table tbody');
     tbody.innerHTML = '';
-    field.forEach(h => {
+    field.forEach(c => {
       const tr = document.createElement('tr');
-      const current = state.oddsOverride[h.post] || '';
+      const current = state.oddsOverride[c.pos] || '';
       tr.innerHTML = `
-        <td style="font-weight:700; color:var(--gold); font-family:'Playfair Display',serif;">${h.post}</td>
-        <td style="font-weight:600;">${escape(h.name)}</td>
-        <td><input type="text" data-odds-post="${h.post}" value="${escape(current)}" placeholder="${h.ml}" style="width:80px; padding:8px; min-height:36px;" /></td>
+        <td style="font-weight:700; color:var(--red); font-family:'Oswald',sans-serif;">${c.pos}</td>
+        <td style="font-weight:600; font-size:12px;">${escape(c.name)}</td>
+        <td><input type="text" data-odds-pos="${c.pos}" value="${escape(current)}" placeholder="${escape(c.preRace)}" style="width:80px; padding:6px; min-height:36px; font-size:13px;" /></td>
       `;
       tbody.appendChild(tr);
     });
 
-    const scratchEl = document.getElementById('admin-scratch-list');
-    scratchEl.innerHTML = '';
-    field.forEach(h => {
+    const wEl = document.getElementById('admin-withdrawn-list');
+    wEl.innerHTML = '';
+    field.forEach(c => {
       const div = document.createElement('label');
-      div.style.cssText = 'display: inline-flex; align-items: center; gap: 8px; margin: 6px 12px 6px 0; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; font-size: 14px; font-weight:600; cursor:pointer;';
-      const checked = state.scratched.includes(h.post) ? 'checked' : '';
-      div.innerHTML = `<input type="checkbox" data-scratch-post="${h.post}" ${checked} style="width:20px; height:20px; min-height:auto;" /> <span style="color:var(--gold); font-weight:700; width:20px;">#${h.post}</span> ${escape(h.name)}`;
-      scratchEl.appendChild(div);
+      div.style.cssText = 'display: inline-flex; align-items: center; gap: 8px; margin: 4px 8px 4px 0; padding: 8px 12px; background: var(--panel); border: 1px solid var(--line-soft); border-radius: 6px; font-size: 13px; font-weight:600; cursor:pointer;';
+      const checked = state.withdrawn.includes(c.pos) ? 'checked' : '';
+      div.innerHTML = `<input type="checkbox" data-withdrawn-pos="${c.pos}" ${checked} style="width:18px; height:18px; min-height:auto;" /> <span style="color:var(--red); font-weight:700; width:28px; font-family:'Oswald',sans-serif;">P${c.pos}</span> ${escape(c.name)}`;
+      wEl.appendChild(div);
     });
   }
 
@@ -613,18 +639,6 @@
   }
   function showError(id, msg) { const el = document.getElementById(id); el.textContent = msg; setTimeout(() => el.textContent = '', 4000); }
   function showSuccess(id, msg) { const el = document.getElementById(id); el.textContent = msg; setTimeout(() => el.textContent = '', 4000); }
-
-  document.getElementById('refresh-odds').addEventListener('click', async (e) => {
-    e.target.disabled = true; e.target.textContent = 'Fetching…';
-    try {
-      const r = await api('/api/odds/refresh', { method: 'POST' });
-      if (!r.ok) showError('odds-status', 'Live fetch failed: ' + (r.error || 'unknown'));
-    } catch (err) {
-      showError('odds-status', err.message);
-    }
-    e.target.disabled = false; e.target.textContent = 'Refresh Live Odds';
-    await refresh();
-  });
 
   document.getElementById('rp-add').addEventListener('click', async () => {
     const name = document.getElementById('rp-name').value.trim();
@@ -637,20 +651,20 @@
   });
   document.getElementById('rp-name').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('rp-add').click(); });
 
-  document.getElementById('bw-submit').addEventListener('click', async () => {
-    const name = document.getElementById('bw-name').value.trim();
-    const winPost = document.getElementById('bw-win').value;
-    const lastPost = document.getElementById('bw-last').value;
-    if (!name || !winPost || !lastPost) {
-      showError('bw-error', 'Please fill in your name, winner, and last-place pick.');
+  document.getElementById('cd-submit').addEventListener('click', async () => {
+    const name = document.getElementById('cd-name').value.trim();
+    const winPos = document.getElementById('cd-win').value;
+    const lastPos = document.getElementById('cd-last').value;
+    if (!name || !winPos || !lastPos) {
+      showError('cd-error', 'Please fill in your name, winner, and last-place pick.');
       return;
     }
     try {
-      await api('/api/picks/submit', { method: 'POST', body: { name, winPost, lastPost } });
-      showSuccess('bw-success', 'Picks submitted successfully! 🌹');
-      document.getElementById('bw-name').value = '';
+      await api('/api/picks/submit', { method: 'POST', body: { name, winPos, lastPos } });
+      showSuccess('cd-success', 'Picks submitted! 🏁');
+      document.getElementById('cd-name').value = '';
       await refresh();
-    } catch (e) { showError('bw-error', e.message); }
+    } catch (e) { showError('cd-error', e.message); }
   });
 
   document.getElementById('admin-set-pin').addEventListener('click', () => {
@@ -659,17 +673,17 @@
     render();
   });
 
-  document.getElementById('admin-draw').addEventListener('click', async (e) => {
-    if (!confirm('Run the draw? This locks in horse assignments and the pool closes.')) return;
+  document.getElementById('admin-draw').addEventListener('click', async () => {
+    if (!confirm('Run the draw? This locks in car assignments and the pool closes.')) return;
     try {
       await api('/api/random/draw', { method: 'POST', admin: true });
       await refresh();
-      alert('Drawn! 🎲');
+      alert('Drawn! 🏁');
     } catch (err) { alert('Failed: ' + err.message); }
   });
 
   document.getElementById('admin-rp-reset').addEventListener('click', async () => {
-    if (!confirm('Reset the random pool? This clears all players.')) return;
+    if (!confirm('Reset the pit lane pool? This clears all players.')) return;
     try {
       await api('/api/random/reset', { method: 'POST', admin: true });
       await refresh();
@@ -677,12 +691,12 @@
   });
 
   document.getElementById('admin-results').addEventListener('click', async () => {
-    const winnerPost = document.getElementById('admin-winner').value;
-    const lastPost = document.getElementById('admin-last').value;
-    if (!winnerPost || !lastPost) { alert('Pick both.'); return; }
-    if (winnerPost === lastPost) { alert('Winner and last-place must be different horses.'); return; }
+    const winnerPos = document.getElementById('admin-winner').value;
+    const lastPos = document.getElementById('admin-last').value;
+    if (!winnerPos || !lastPos) { alert('Pick both.'); return; }
+    if (winnerPos === lastPos) { alert('Winner and last-place must be different cars.'); return; }
     try {
-      await api('/api/admin/results', { method: 'POST', admin: true, body: { winnerPost, lastPost } });
+      await api('/api/admin/results', { method: 'POST', admin: true, body: { winnerPos, lastPos } });
       await refresh();
       alert('Official results declared!');
       document.querySelector('nav.tabs button[data-tab="results"]').click();
@@ -690,16 +704,16 @@
   });
 
   document.getElementById('admin-odds-save').addEventListener('click', async () => {
-    const inputs = document.querySelectorAll('#admin-odds-table input[data-odds-post]');
+    const inputs = document.querySelectorAll('#admin-odds-table input[data-odds-pos]');
     const odds = {};
     inputs.forEach(i => {
       const v = i.value.trim();
-      if (v) odds[i.dataset.oddsPost] = v;
+      if (v) odds[i.dataset.oddsPos] = v;
     });
     try {
       await api('/api/admin/odds', { method: 'POST', admin: true, body: { odds } });
       await refresh();
-      alert('Live odds saved.');
+      alert('Odds saved.');
     } catch (err) { alert('Failed: ' + err.message); }
   });
 
@@ -710,13 +724,13 @@
     } catch (err) { alert('Failed: ' + err.message); }
   });
 
-  document.getElementById('admin-scratch-save').addEventListener('click', async () => {
-    const checks = document.querySelectorAll('#admin-scratch-list input[data-scratch-post]:checked');
-    const posts = Array.from(checks).map(c => c.dataset.scratchPost);
+  document.getElementById('admin-withdrawn-save').addEventListener('click', async () => {
+    const checks = document.querySelectorAll('#admin-withdrawn-list input[data-withdrawn-pos]:checked');
+    const positions = Array.from(checks).map(c => c.dataset.withdrawnPos);
     try {
-      await api('/api/admin/scratch', { method: 'POST', admin: true, body: { posts } });
+      await api('/api/admin/withdrawn', { method: 'POST', admin: true, body: { positions } });
       await refresh();
-      alert('Scratches saved.');
+      alert('Withdrawals saved.');
     } catch (err) { alert('Failed: ' + err.message); }
   });
 
