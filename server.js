@@ -73,12 +73,11 @@ let state = {
     drawn: false,
   },
   chickenDinner: {
-    picks: [],            // [{name, winPos, lastPos}]
+    picks: [],            // [{name, picks: [p1, p2, p3], crashPos, submittedAt}]
   },
   results: {
-    winnerPos: null,      // 1..33
-    lastPos: null,        // 1..33
-    runnersUp: [],        // [p2, p3, p4, p5] — optional, used for random pool cascade
+    finishOrder: [],      // 33 starting positions in finishing order; index 0 = 1st place
+    crashPos: null,       // starting pos of the first car to crash
     declared: false,
   },
   oddsOverride: {},       // { pos: "3-1" }
@@ -90,6 +89,24 @@ function loadState() {
     if (fs.existsSync(STATE_FILE)) {
       const data = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'));
       state = { ...state, ...data };
+      // Migrate: drop old-shape picks (winPos/lastPos) — new game requires 3 picks + crashPos
+      if (state.chickenDinner && Array.isArray(state.chickenDinner.picks)) {
+        const before = state.chickenDinner.picks.length;
+        state.chickenDinner.picks = state.chickenDinner.picks.filter(p => Array.isArray(p.picks) && p.picks.length === 3 && p.crashPos);
+        if (before !== state.chickenDinner.picks.length) {
+          console.log(`[migration] dropped ${before - state.chickenDinner.picks.length} legacy picks (winner+last format)`);
+        }
+      }
+      // Migrate: ensure finishOrder/crashPos shape on results
+      if (state.results) {
+        if (!Array.isArray(state.results.finishOrder)) state.results.finishOrder = [];
+        if (state.results.crashPos === undefined) state.results.crashPos = null;
+        // Old fields no longer used: winnerPos, lastPos, runnersUp — leave them but rely on new ones
+        if (state.results.finishOrder.length === 0 && state.results.declared) {
+          // legacy declared without finishOrder — invalidate
+          state.results.declared = false;
+        }
+      }
       console.log('[state] loaded from disk');
     }
   } catch (e) {
@@ -149,22 +166,53 @@ function checkAdmin(req) {
   return pin === CONFIG.adminPin;
 }
 
+// finish position (1..33) of a starting position. Returns 33 if not in finish order.
+function finishPositionOf(startingPos, finishOrder) {
+  const idx = finishOrder.indexOf(startingPos);
+  return idx >= 0 ? idx + 1 : 33;
+}
+
 function computeStandings() {
-  const { winnerPos, lastPos, declared } = state.results;
-  if (!declared) return [];
+  const { finishOrder, crashPos, declared } = state.results;
+  if (!declared || !finishOrder || finishOrder.length === 0) return [];
   const standings = state.chickenDinner.picks.map(p => {
-    const winCorrect = p.winPos === winnerPos;
-    const lastCorrect = p.lastPos === lastPos;
-    const points = (winCorrect ? 1 : 0) + (lastCorrect ? 1 : 0);
-    return { ...p, winCorrect, lastCorrect, points };
+    const finishes = p.picks.map(pos => finishPositionOf(pos, finishOrder));
+    const avg = finishes.reduce((a, b) => a + b, 0) / finishes.length;
+    const best = Math.min(...finishes);
+    const crashCorrect = !!crashPos && p.crashPos === crashPos;
+    return { ...p, finishes, avg, best, crashCorrect };
   });
-  standings.sort((a, b) => b.points - a.points);
+  // Lowest avg wins; tiebreak by best individual finish (lower = better); then earliest submission
+  standings.sort((a, b) => {
+    if (a.avg !== b.avg) return a.avg - b.avg;
+    if (a.best !== b.best) return a.best - b.best;
+    return String(a.submittedAt || '').localeCompare(String(b.submittedAt || ''));
+  });
   return standings;
 }
 
+function computeAvgFinishWinner(standings) {
+  if (!standings.length) return null;
+  return standings[0]; // sort puts winner first
+}
+
+function computeCrashWinner() {
+  const { crashPos, declared } = state.results;
+  if (!declared || !crashPos) return null;
+  return state.chickenDinner.picks.find(p => p.crashPos === crashPos) || null;
+}
+
+function computePoolSplit() {
+  const total = state.chickenDinner.picks.length * CONFIG.chickenDinnerBuyIn;
+  const crash = Math.floor(total * 0.33);
+  const avgFinish = total - crash;
+  return { total, avgFinish, crash };
+}
+
 function computeRandomWinner() {
-  if (!state.results.declared || !state.results.winnerPos) return null;
-  const cascade = [state.results.winnerPos, ...(state.results.runnersUp || [])].filter(Boolean);
+  const { declared, finishOrder } = state.results;
+  if (!declared || !finishOrder || finishOrder.length === 0) return null;
+  const cascade = finishOrder.slice(0, 5); // top 5 finishers
   for (let i = 0; i < cascade.length; i++) {
     const pos = cascade[i];
     const match = state.randomPool.players.find(p => p.assignedPos === pos);
@@ -197,6 +245,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (pathname === '/api/state' && method === 'GET') {
+      const standings = computeStandings();
       return send(res, 200, {
         config: {
           partyName: CONFIG.partyName,
@@ -209,8 +258,11 @@ const server = http.createServer(async (req, res) => {
         },
         field: INDY_FIELD,
         state,
-        standings: computeStandings(),
+        standings,
         randomWinner: computeRandomWinner(),
+        avgFinishWinner: computeAvgFinishWinner(standings),
+        crashWinner: computeCrashWinner(),
+        poolSplit: computePoolSplit(),
       });
     }
 
@@ -256,16 +308,20 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/picks/submit' && method === 'POST') {
       const body = await readJsonBody(req);
       const name = (body.name || '').trim();
-      const winPos = parseInt(body.winPos, 10);
-      const lastPos = parseInt(body.lastPos, 10);
+      const picksRaw = Array.isArray(body.picks) ? body.picks : [];
+      const picks = picksRaw.map(n => parseInt(n, 10)).filter(n => Number.isInteger(n));
+      const crashPos = parseInt(body.crashPos, 10);
       if (!name) return send(res, 400, { error: 'name required' });
-      if (!winPos || !lastPos) return send(res, 400, { error: 'pick a winner and a last-place car' });
-      if (winPos === lastPos) return send(res, 400, { error: 'winner and last-place must be different cars' });
+      if (picks.length !== 3) return send(res, 400, { error: 'pick exactly 3 cars' });
+      if (!crashPos) return send(res, 400, { error: 'pick a first-crash car' });
+      if (new Set(picks).size !== picks.length) return send(res, 400, { error: '3 picks must be different cars' });
       const validPositions = INDY_FIELD.map(c => c.pos);
-      if (!validPositions.includes(winPos) || !validPositions.includes(lastPos)) return send(res, 400, { error: 'invalid position' });
+      if (picks.some(p => !validPositions.includes(p)) || !validPositions.includes(crashPos)) {
+        return send(res, 400, { error: 'invalid car position' });
+      }
 
       const existing = state.chickenDinner.picks.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
-      const entry = { name, winPos, lastPos, submittedAt: new Date().toISOString() };
+      const entry = { name, picks, crashPos, submittedAt: new Date().toISOString() };
       if (existing >= 0) state.chickenDinner.picks[existing] = entry;
       else state.chickenDinner.picks.push(entry);
       saveState();
@@ -284,26 +340,30 @@ const server = http.createServer(async (req, res) => {
       if (!checkAdmin(req)) return send(res, 401, { error: 'admin only' });
       const body = await readJsonBody(req);
       const validPositions = INDY_FIELD.map(c => c.pos);
-      const winnerPos = parseInt(body.winnerPos, 10) || null;
-      const lastPos = parseInt(body.lastPos, 10) || null;
-      const runnersUpRaw = Array.isArray(body.runnersUp) ? body.runnersUp : [];
-      const runnersUp = runnersUpRaw
-        .map(n => parseInt(n, 10))
-        .filter(n => Number.isInteger(n) && validPositions.includes(n));
+      const finishOrderRaw = Array.isArray(body.finishOrder) ? body.finishOrder : [];
+      const finishOrder = finishOrderRaw.map(n => parseInt(n, 10));
+      const crashPos = parseInt(body.crashPos, 10) || null;
 
-      const allPositions = [winnerPos, ...runnersUp].filter(Boolean);
-      const uniquePositions = new Set(allPositions);
-      if (uniquePositions.size !== allPositions.length) {
-        return send(res, 400, { error: 'top finishers must all be different cars' });
+      if (finishOrder.length !== validPositions.length) {
+        return send(res, 400, { error: `finish order must list all ${validPositions.length} cars` });
       }
-      if (winnerPos && lastPos && winnerPos === lastPos) {
-        return send(res, 400, { error: 'winner and last-place must be different cars' });
+      if (finishOrder.some(n => !validPositions.includes(n))) {
+        return send(res, 400, { error: 'finish order has an unknown car position' });
+      }
+      if (new Set(finishOrder).size !== finishOrder.length) {
+        return send(res, 400, { error: 'finish order has duplicate cars' });
+      }
+      if (crashPos && !validPositions.includes(crashPos)) {
+        return send(res, 400, { error: 'invalid first-crash car' });
       }
 
-      state.results.winnerPos = winnerPos;
-      state.results.lastPos = lastPos;
-      state.results.runnersUp = runnersUp;
-      state.results.declared = !!(winnerPos && lastPos);
+      state.results.finishOrder = finishOrder;
+      state.results.crashPos = crashPos;
+      state.results.declared = true;
+      // Keep legacy fields in sync for any code still reading them
+      state.results.winnerPos = finishOrder[0];
+      state.results.lastPos = finishOrder[finishOrder.length - 1];
+      state.results.runnersUp = finishOrder.slice(1, 5);
       saveState();
       return send(res, 200, { ok: true, results: state.results });
     }
@@ -329,7 +389,7 @@ const server = http.createServer(async (req, res) => {
       state = {
         randomPool: { players: [], drawn: false },
         chickenDinner: { picks: [] },
-        results: { winnerPos: null, lastPos: null, declared: false },
+        results: { finishOrder: [], crashPos: null, declared: false },
         oddsOverride: {},
         withdrawn: [],
       };

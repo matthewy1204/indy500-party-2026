@@ -304,7 +304,6 @@
 <header class="hero">
   <div class="label">110th Running</div>
   <h1 >Hunden Partners | Indy 500 Party</h1>
-  <div class="sub" id="party-sub">Greatest Spectacle in Racing</div>
   <div class="date" id="party-date">Sunday · May 24 · 12:45 ET</div>
   <div class="checker"></div>
 </header>
@@ -331,7 +330,7 @@
               <li>Lower number = bigger favorite</li>
               <li>Higher number = longer shot</li>
               <li>Lines come from practice data</li>
-              <li>Use them to decide your <strong>Winner Winner Chicken Dinner</strong> and <strong>Winner in Our Hearts</strong></li>
+              <li>Use them to decide your <strong>Winner Winner Chicken Dinner</strong> and <strong>First Crash</strong></li>
             </ul>
           </div>
 
@@ -344,21 +343,26 @@
           <div class="picks-form-block">
             <h2>Chicken Dinner</h2>
             <ul class="help picks-help" style="color: var(--ink); font-size: 13px; list-style: none; padding: 0; margin: 8px 0 0; text-align: center;">
-              <li style="margin-bottom: 4px;"><strong>Pick the winner & last car.</strong></li>
-              <li style="margin-bottom: 4px;"><strong>Winner:</strong> takes the pool. Split with other winners.</li>
-              <li><strong>Last place picks:</strong> No loss. Get your money back.</li>
+              <li style="margin-bottom: 4px;"><strong>Pick 3 cars + the first car to crash.</strong></li>
+              <li style="margin-bottom: 4px;"><strong>Best avg finish</strong> (lowest avg of your 3 picks) takes <strong>67%</strong> of the pot.</li>
+              <li style="margin-bottom: 4px;">Picking the actual <strong>first car to crash</strong> takes the other <strong>33%</strong>.</li>
+              <li>One winner per prize. Ties broken by your best single car finish.</li>
             </ul>
             <div class="stat-grid">
               <div class="stat"><div class="label">Entry Fee</div><div class="value">$<span id="cd-buyin">10</span></div></div>
               <div class="stat"><div class="label">Total Pool</div><div class="value">$<span id="cd-pool">0</span></div></div>
+              <div class="stat"><div class="label">Avg-Finish 67%</div><div class="value" style="font-size:20px;">$<span id="cd-prize-avg">0</span></div></div>
+              <div class="stat"><div class="label">First Crash 33%</div><div class="value" style="font-size:20px;">$<span id="cd-prize-crash">0</span></div></div>
             </div>
 
             <div class="row" style="margin-bottom:10px;">
               <input type="text" id="cd-name" placeholder="Your full name" class="grow" maxlength="40" />
             </div>
             <div class="row">
-              <select id="cd-win" class="grow"><option value="">🍗 Winner Winner Chicken Dinner 🍗</option></select>
-              <select id="cd-last" class="grow"><option value="">❤️ Winner in Our Hearts ❤️</option></select>
+              <select id="cd-pick1" class="grow"><option value="">🥇 Pick #1…</option></select>
+              <select id="cd-pick2" class="grow"><option value="">🥈 Pick #2…</option></select>
+              <select id="cd-pick3" class="grow"><option value="">🥉 Pick #3…</option></select>
+              <select id="cd-crash" class="grow"><option value="">🔥 First Crash…</option></select>
               <button class="btn" id="cd-submit" style="width: 100%;">Submit Picks</button>
             </div>
             <div class="error" id="cd-error"></div>
@@ -435,14 +439,12 @@
 
       <details class="admin-block">
         <summary>Declare Race Results</summary>
-        <p class="help" style="text-align: left; margin-bottom: 10px;">Winner + Last place are required. 2nd–5th are <strong>optional</strong> and only used as the Pit Lane Random Pool cascade fallback (if nobody drew the winner).</p>
+        <p class="help" style="text-align: left; margin-bottom: 10px;">Paste in the <strong>full finish order as 33 starting positions</strong>, separated by commas, spaces, or newlines. The car that finished 1st goes first. Pull this from IndyCar's official results page.</p>
+        <p class="help" style="text-align: left; margin-bottom: 10px;">Example: <code>9, 1, 10, 6, 5, ...</code> means starting P9 finished 1st, P1 finished 2nd, P10 finished 3rd, etc.</p>
+        <textarea id="admin-finish-order" placeholder="9, 1, 10, 6, 5, 3, 23, 14, 12, 19, 26, 27, 11, 25, 28, 7, 15, 8, 16, 17, 18, 33, 32, 30, 31, 20, 21, 22, 24, 29, 2, 4, 13" rows="6" style="width: 100%; padding: 12px 14px; font-size: 15px; border: 1px solid var(--line-soft); border-radius: 6px; font-family: 'Inter', monospace; resize: vertical; margin-bottom: 10px;"></textarea>
+        <div id="admin-finish-preview" style="font-size: 12px; color: var(--muted); margin-bottom: 10px; min-height: 18px;"></div>
         <div class="row">
-          <select id="admin-winner" class="grow"><option value="">🏆 1st (Winner)…</option></select>
-          <select id="admin-p2" class="grow"><option value="">🥈 2nd place… (optional)</option></select>
-          <select id="admin-p3" class="grow"><option value="">🥉 3rd place… (optional)</option></select>
-          <select id="admin-p4" class="grow"><option value="">4️⃣ 4th place… (optional)</option></select>
-          <select id="admin-p5" class="grow"><option value="">5️⃣ 5th place… (optional)</option></select>
-          <select id="admin-last" class="grow"><option value="">🐢 Last place…</option></select>
+          <select id="admin-crash" class="grow"><option value="">🔥 First car to crash…</option></select>
           <button class="btn" id="admin-results" style="width: 100%;">Declare Official Results</button>
         </div>
       </details>
@@ -531,7 +533,7 @@
 
   function render() {
     if (!DATA) return;
-    const { config, field, state, standings, randomWinner } = DATA;
+    const { config, field, state, standings, randomWinner, avgFinishWinner, crashWinner, poolSplit } = DATA;
 
     setText('party-title', config.partyName);
     setText('party-sub', config.raceSub);
@@ -544,8 +546,8 @@
 
     renderOdds(field, state);
     renderRandomPool(field, state, config);
-    renderPicks(field, state, config, standings);
-    renderResults(field, state, standings, randomWinner, config);
+    renderPicks(field, state, config, standings, poolSplit);
+    renderResults(field, state, standings, randomWinner, config, avgFinishWinner, crashWinner, poolSplit);
     renderAdmin(field, state);
   }
 
@@ -651,19 +653,21 @@
     });
   }
 
-  function renderPicks(field, state, config, standings) {
+  function renderPicks(field, state, config, standings, poolSplit) {
     const picks = state.chickenDinner.picks;
-    document.getElementById('cd-pool').textContent = (picks.length * config.chickenDinnerBuyIn).toLocaleString();
+    const totalPool = picks.length * config.chickenDinnerBuyIn;
+    setText('cd-pool', totalPool.toLocaleString());
+    const crashPrize = poolSplit ? poolSplit.crash : Math.floor(totalPool * 0.33);
+    const avgPrize = poolSplit ? poolSplit.avgFinish : (totalPool - crashPrize);
+    setText('cd-prize-avg', avgPrize.toLocaleString());
+    setText('cd-prize-crash', crashPrize.toLocaleString());
 
     const placeholders = {
-      'cd-win': '🍗 Winner Winner Chicken Dinner…',
-      'cd-last': '❤️ Winner in Our Hearts…',
-      'admin-winner': '🏆 1st (Winner)…',
-      'admin-p2': '🥈 2nd place… (optional)',
-      'admin-p3': '🥉 3rd place… (optional)',
-      'admin-p4': '4️⃣ 4th place… (optional)',
-      'admin-p5': '5️⃣ 5th place… (optional)',
-      'admin-last': '🐢 Last place…',
+      'cd-pick1': '🥇 Pick #1…',
+      'cd-pick2': '🥈 Pick #2…',
+      'cd-pick3': '🥉 Pick #3…',
+      'cd-crash': '🔥 First Crash…',
+      'admin-crash': '🔥 First car to crash…',
     };
     Object.keys(placeholders).forEach(id => {
       const sel = document.getElementById(id);
@@ -689,29 +693,32 @@
     picks.forEach(p => {
       const li = document.createElement('li');
       li.className = 'list-card';
-      const win = field.find(c => c.pos === p.winPos);
-      const last = field.find(c => c.pos === p.lastPos);
+      const carEls = (p.picks || []).map((pos, idx) => {
+        const c = field.find(f => f.pos === pos);
+        if (!c) return '';
+        const medals = ['🥇', '🥈', '🥉'];
+        return `<div><span style="display:inline-block; width:22px;">${medals[idx] || '·'}</span> <span style="font-weight:600;">P${c.pos} · #${escape(c.car)}</span> ${escape(c.name)}</div>`;
+      }).join('');
+      const crashCar = field.find(c => c.pos === p.crashPos);
       const standing = standings.find(s => s.name === p.name);
-      const points = standing ? standing.points : null;
+      const avgPill = standing ? `<div class="pill" style="font-size:12px; padding:6px 10px; margin:0;">avg ${standing.avg.toFixed(1)}</div>` : '';
       li.innerHTML = `
         <div style="flex:1; min-width:0;">
           <strong style="font-size:15px; color:var(--ink); font-family:'Oswald',sans-serif; text-transform:uppercase;">${escape(p.name)}</strong>
           <div style="margin-top:5px; color:var(--muted); font-size:12px; line-height:1.6;">
-            <span style="display:inline-block; width:18px;">🍗</span> <span style="font-weight:600;">P${win.pos} · #${escape(win.car)}</span> ${escape(win.name)}<br>
-            <span style="display:inline-block; width:18px;">❤️</span> <span style="font-weight:600;">P${last.pos} · #${escape(last.car)}</span> ${escape(last.name)}
+            ${carEls}
+            ${crashCar ? `<div><span style="display:inline-block; width:22px;">🔥</span> <span style="font-weight:600;">P${crashCar.pos} · #${escape(crashCar.car)}</span> ${escape(crashCar.name)}</div>` : ''}
           </div>
         </div>
-        <div style="text-align:right;">
-          ${points !== null ? `<div class="pill ${points >= 1 ? 'green' : 'red'}" style="font-size:13px; padding:6px 12px; margin:0;">${points} pt${points === 1 ? '' : 's'}</div>` : ''}
-        </div>
+        <div style="text-align:right;">${avgPill}</div>
       `;
       list.appendChild(li);
     });
   }
 
-  function renderResults(field, state, standings, randomWinner, config) {
+  function renderResults(field, state, standings, randomWinner, config, avgFinishWinner, crashWinner, poolSplit) {
     const el = document.getElementById('results-area');
-    if (!state.results.declared) {
+    if (!state.results.declared || !state.results.finishOrder || state.results.finishOrder.length === 0) {
       el.innerHTML = `
         <div class="card">
           <h2>Official Results</h2>
@@ -719,14 +726,16 @@
         </div>`;
       return;
     }
-    const winner = field.find(c => c.pos === state.results.winnerPos);
-    const last = field.find(c => c.pos === state.results.lastPos);
+    const finishOrder = state.results.finishOrder;
+    const winner = field.find(c => c.pos === finishOrder[0]);
+    const crashCar = state.results.crashPos ? field.find(c => c.pos === state.results.crashPos) : null;
 
     let html = '';
 
+    // Pit Lane Pool
     html += `<div class="card">
       <h2>🪖 Pit Lane Pool Winner</h2>
-      <p style="text-align:center; margin-bottom:18px;">Winning Car: <strong style="color:var(--red); font-family:'Oswald',sans-serif; text-transform:uppercase;">P${winner.pos} · #${escape(winner.car)} ${escape(winner.name)}</strong></p>`;
+      <p style="text-align:center; margin-bottom:18px;">Race Winner: <strong style="color:var(--red); font-family:'Oswald',sans-serif; text-transform:uppercase;">P${winner.pos} · #${escape(winner.car)} ${escape(winner.name)}</strong></p>`;
     if (randomWinner) {
       const placeLabels = { 1: '1st place (winner)', 2: '2nd place', 3: '3rd place', 4: '4th place', 5: '5th place' };
       const matchedCar = field.find(c => c.pos === randomWinner.matchedPos);
@@ -737,51 +746,71 @@
         <div class="pool-line">Takes the $${(state.randomPool.players.length * config.randomPoolBuyIn).toLocaleString()} pool!</div>
         ${cascadeLine}</div>`;
     } else if (state.randomPool.drawn) {
-      const checkedCount = 1 + (state.results.runnersUp ? state.results.runnersUp.length : 0);
-      const tail = checkedCount > 1
-        ? ` We cascaded through the top ${checkedCount} finishers and nobody matched. Pool rolls forward (or split it however you like 🥛).`
-        : ' Pool rolls forward (or split it however you like 🥛).';
-      html += `<p class="empty">No one drew a top-finisher car.${tail}</p>`;
+      html += `<p class="empty">No one drew a top-5 finisher. Pool rolls forward (or split it however you like 🥛).</p>`;
     } else {
       html += `<p class="empty">The pit lane draw was never run.</p>`;
     }
     html += `</div>`;
 
+    // Chicken Dinner — 2 prizes
+    const totalPool = (poolSplit && poolSplit.total) || (standings.length * config.chickenDinnerBuyIn);
+    const avgPrize = (poolSplit && poolSplit.avgFinish) || Math.floor(totalPool * 0.67);
+    const crashPrize = (poolSplit && poolSplit.crash) || (totalPool - avgPrize);
+
     html += `<div class="card">
-      <h2>🍗 Chicken Dinner Standings</h2>
-      <p style="text-align:center; margin-bottom:18px;">Winner: <strong style="color:var(--red);">P${winner.pos} · ${escape(winner.name)}</strong><br>Last: <strong style="color:var(--red);">P${last.pos} · ${escape(last.name)}</strong></p>`;
+      <h2>🍗 Chicken Dinner Results</h2>
+      <p style="text-align:center; margin-bottom:18px; font-size:14px;">
+        Race Winner: <strong style="color:var(--red);">P${winner.pos} · ${escape(winner.name)}</strong><br>
+        ${crashCar ? `First Crash: <strong style="color:var(--red);">P${crashCar.pos} · ${escape(crashCar.name)}</strong>` : '<em style="color:var(--muted);">First crash car not recorded</em>'}
+      </p>`;
+
     if (standings.length === 0) {
       html += `<p class="empty">No entries.</p>`;
     } else {
-      const topScore = standings[0].points;
-      const winners = standings.filter(s => s.points === topScore);
-      const pool = standings.length * config.chickenDinnerBuyIn;
-      const split = topScore > 0 && winners.length > 0 ? Math.floor(pool / winners.length) : 0;
-
-      if (topScore > 0) {
+      // Avg-finish prize banner
+      if (avgFinishWinner) {
         html += `<div class="winner-banner">
-          <h2>🏆 ${winners.map(w => escape(w.name)).join(' & ')}</h2>
-          <div class="pool-line">${winners.length > 1 ? `Split the $${pool.toLocaleString()} pool — $${split.toLocaleString()} each` : `Takes the $${pool.toLocaleString()} pool`}</div>
-          <div class="pts-line">${topScore} of 2 picks correct</div>
+          <h2>🏆 ${escape(avgFinishWinner.name)}</h2>
+          <div class="pool-line">Best avg finish: <strong>${avgFinishWinner.avg.toFixed(2)}</strong> — takes $${avgPrize.toLocaleString()} (67%)</div>
+          <div class="pts-line">Best individual pick finished ${avgFinishWinner.best}${ordSuffix(avgFinishWinner.best)}</div>
         </div>`;
-      } else {
-        html += `<p class="empty">Nobody got either pick right. Pool rolls forward.</p>`;
       }
 
-      html += `<div style="display:flex; flex-direction:column; gap:8px;">`;
-      standings.forEach(s => {
-        const w = field.find(c => c.pos === s.winPos);
-        const l = field.find(c => c.pos === s.lastPos);
-        const cls = s.points === topScore && topScore > 0 ? 'winner' : '';
+      // Crash prize banner
+      if (crashWinner) {
+        html += `<div class="winner-banner" style="border-color: var(--red);">
+          <h2 style="color: var(--red);">🔥 ${escape(crashWinner.name)}</h2>
+          <div class="pool-line">Picked the first crash (P${crashCar.pos} · ${escape(crashCar.name)}) — takes $${crashPrize.toLocaleString()} (33%)</div>
+        </div>`;
+      } else if (crashCar) {
+        html += `<p class="empty">No one picked the first-crash car (P${crashCar.pos} · ${escape(crashCar.name)}). The $${crashPrize.toLocaleString()} 33% rolls into the avg-finish prize (or host's call 🥛).</p>`;
+      }
+
+      // Leaderboard
+      html += `<h3 style="margin-top: 24px;">Leaderboard</h3>`;
+      html += `<div style="display:flex; flex-direction:column; gap:8px; margin-top: 12px;">`;
+      standings.forEach((s, idx) => {
+        const cls = idx === 0 ? 'winner' : '';
+        const finishes = s.picks.map((pos, i) => {
+          const c = field.find(f => f.pos === pos);
+          const finishPos = s.finishes[i];
+          const medals = ['🥇', '🥈', '🥉'];
+          return `<div>${medals[i]} <span style="font-weight:600;">P${pos} · ${c ? escape(c.name) : '?'}</span> <span style="color:var(--gold); font-weight:700;">→ ${finishPos}${ordSuffix(finishPos)}</span></div>`;
+        }).join('');
+        const crashEntryCar = field.find(f => f.pos === s.crashPos);
+        const crashLine = `<div>🔥 P${s.crashPos} ${crashEntryCar ? escape(crashEntryCar.name) : '?'} ${s.crashCorrect ? '— <span style="color:var(--green); font-weight:700;">✅ HIT</span>' : '— <span style="color:var(--muted);">❌</span>'}</div>`;
         html += `<div class="list-card ${cls}">
-          <div style="flex:1;">
-            <strong style="font-size:15px; color:var(--ink); font-family:'Oswald',sans-serif; text-transform:uppercase;">${escape(s.name)}</strong>
-            <div style="font-size:12px; margin-top:4px; color:var(--muted); line-height:1.6;">
-              ${s.winCorrect ? '✅' : '❌'} P${w.pos} · ${escape(w.name)}<br>
-              ${s.lastCorrect ? '✅' : '❌'} P${l.pos} · ${escape(l.name)}
+          <div style="flex:1; min-width:0;">
+            <strong style="font-size:15px; color:var(--ink); font-family:'Oswald',sans-serif; text-transform:uppercase;">${idx === 0 ? '🏆 ' : ''}${escape(s.name)}</strong>
+            <div style="font-size:12px; margin-top:4px; color:var(--muted); line-height:1.7;">
+              ${finishes}
+              ${crashLine}
             </div>
           </div>
-          <div style="font-family:'Oswald',sans-serif; font-size:24px; font-weight:700; color:var(--gold); padding-left:14px;">${s.points}</div>
+          <div style="text-align:right; padding-left:14px;">
+            <div style="font-family:'Oswald',sans-serif; font-size:11px; color:var(--muted); letter-spacing:0.1em;">AVG</div>
+            <div style="font-family:'Oswald',sans-serif; font-size:24px; font-weight:700; color:var(--gold);">${s.avg.toFixed(1)}</div>
+          </div>
         </div>`;
       });
       html += `</div>`;
@@ -789,6 +818,12 @@
     html += `</div>`;
 
     el.innerHTML = html;
+  }
+
+  function ordSuffix(n) {
+    const s = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return s[(v - 20) % 10] || s[v] || s[0];
   }
 
   function renderAdmin(field, state) {
@@ -844,14 +879,21 @@
 
   document.getElementById('cd-submit').addEventListener('click', async () => {
     const name = document.getElementById('cd-name').value.trim();
-    const winPos = document.getElementById('cd-win').value;
-    const lastPos = document.getElementById('cd-last').value;
-    if (!name || !winPos || !lastPos) {
-      showError('cd-error', 'Please fill in your name, winner, and last-place pick.');
+    const pick1 = document.getElementById('cd-pick1').value;
+    const pick2 = document.getElementById('cd-pick2').value;
+    const pick3 = document.getElementById('cd-pick3').value;
+    const crashPos = document.getElementById('cd-crash').value;
+    if (!name || !pick1 || !pick2 || !pick3 || !crashPos) {
+      showError('cd-error', 'Fill in your name, 3 car picks, and the first-crash pick.');
+      return;
+    }
+    const picks = [pick1, pick2, pick3];
+    if (new Set(picks).size !== 3) {
+      showError('cd-error', 'Your 3 picks must be different cars.');
       return;
     }
     try {
-      await api('/api/picks/submit', { method: 'POST', body: { name, winPos, lastPos } });
+      await api('/api/picks/submit', { method: 'POST', body: { name, picks, crashPos } });
       showSuccess('cd-success', 'Picks submitted! 🏁');
       document.getElementById('cd-name').value = '';
       await refresh();
@@ -883,29 +925,47 @@
     } catch (err) { alert('Failed: ' + err.message); }
   });
 
+  function parseFinishOrder(text) {
+    return String(text || '').split(/[\s,]+/).map(s => s.trim()).filter(Boolean).map(n => parseInt(n, 10)).filter(n => Number.isInteger(n));
+  }
+
+  function updateFinishPreview() {
+    const ta = document.getElementById('admin-finish-order');
+    const preview = document.getElementById('admin-finish-preview');
+    if (!ta || !preview) return;
+    const parsed = parseFinishOrder(ta.value);
+    const expected = (DATA && DATA.field) ? DATA.field.length : 33;
+    const dupes = parsed.length !== new Set(parsed).size;
+    if (parsed.length === 0) {
+      preview.textContent = '';
+      preview.style.color = 'var(--muted)';
+    } else if (parsed.length !== expected) {
+      preview.textContent = `Parsed ${parsed.length} car positions — need exactly ${expected}.`;
+      preview.style.color = 'var(--red)';
+    } else if (dupes) {
+      preview.textContent = `Parsed ${parsed.length} positions but some are duplicates.`;
+      preview.style.color = 'var(--red)';
+    } else {
+      preview.textContent = `✓ Parsed all ${expected} positions. 1st = P${parsed[0]} · Last = P${parsed[expected - 1]}.`;
+      preview.style.color = 'var(--green)';
+    }
+  }
+
+  document.addEventListener('input', e => {
+    if (e.target && e.target.id === 'admin-finish-order') updateFinishPreview();
+  });
+
   document.getElementById('admin-results').addEventListener('click', async () => {
     if (!requireAdminPin()) return;
-    const winnerPos = document.getElementById('admin-winner').value;
-    const lastPos = document.getElementById('admin-last').value;
-    if (!winnerPos || !lastPos) { alert('Pick the Winner and Last-place at minimum.'); return; }
-    if (winnerPos === lastPos) { alert('Winner and last-place must be different cars.'); return; }
-
-    const runnersUp = ['admin-p2', 'admin-p3', 'admin-p4', 'admin-p5']
-      .map(id => document.getElementById(id).value)
-      .filter(v => v !== '');
-
-    const allTop = [winnerPos, ...runnersUp];
-    if (new Set(allTop).size !== allTop.length) {
-      alert('1st through 5th must all be different cars.');
-      return;
-    }
-    if (runnersUp.includes(lastPos)) {
-      alert('Last-place car can\'t also be in the top 5.');
-      return;
-    }
+    const finishOrder = parseFinishOrder(document.getElementById('admin-finish-order').value);
+    const crashPos = document.getElementById('admin-crash').value;
+    const expected = (DATA && DATA.field) ? DATA.field.length : 33;
+    if (finishOrder.length !== expected) { alert(`Finish order must list all ${expected} cars. You have ${finishOrder.length}.`); return; }
+    if (new Set(finishOrder).size !== finishOrder.length) { alert('Finish order has duplicates.'); return; }
+    if (!crashPos) { alert('Pick the first car to crash.'); return; }
 
     try {
-      await api('/api/admin/results', { method: 'POST', admin: true, body: { winnerPos, lastPos, runnersUp } });
+      await api('/api/admin/results', { method: 'POST', admin: true, body: { finishOrder, crashPos } });
       await refresh();
       alert('Official results declared!');
       document.querySelector('nav.tabs button[data-tab="results"]').click();
