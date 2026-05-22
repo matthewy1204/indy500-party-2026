@@ -200,8 +200,18 @@
   .success { color: var(--green); font-size: 14px; margin-top: 6px; font-weight: 600; text-align: center; }
 
   .pay-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; justify-content: center; }
-  .pay-row a { background: var(--panel); color: var(--ink); padding: 12px 16px; border-radius: 4px; border: 1px solid var(--line-soft); font-size: 13px; font-weight: 700; text-align: center; flex: 1; min-width: 120px; text-transform: uppercase; letter-spacing: 0.1em; font-family: "Oswald", sans-serif; }
-  .pay-row a:hover { border-color: var(--red); color: var(--red); }
+  .pay-row a, .pay-row .copy-btn {
+    background: var(--panel); color: var(--ink); padding: 12px 16px; border-radius: 4px; border: 1px solid var(--line-soft);
+    font-size: 13px; font-weight: 700; text-align: center; flex: 1; min-width: 140px;
+    text-transform: uppercase; letter-spacing: 0.1em; font-family: "Oswald", sans-serif;
+    cursor: pointer; transition: all 0.15s;
+    display: flex; flex-direction: column; gap: 4px; align-items: center; justify-content: center;
+  }
+  .pay-row a { text-decoration: none; }
+  .pay-row a:hover, .pay-row .copy-btn:hover { border-color: var(--red); color: var(--red); }
+  .pay-row .copy-btn .copy-target { font-size: 11px; font-weight: 500; letter-spacing: 0; text-transform: none; opacity: 0.7; }
+  .pay-row .copy-btn.copied { background: var(--green); color: #fff; border-color: var(--green); }
+  .pay-row .copy-btn.copied .copy-target { opacity: 0.95; }
 
   .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 16px 0; }
   .stat { background: var(--bg); color: var(--panel); padding: 14px; border-radius: 6px; text-align: center; border-left: 3px solid var(--red); }
@@ -359,10 +369,10 @@
               <input type="text" id="cd-name" placeholder="Your full name" class="grow" maxlength="40" />
             </div>
             <div class="row">
-              <select id="cd-pick1" class="grow"><option value="">🥇 Pick #1…</option></select>
-              <select id="cd-pick2" class="grow"><option value="">🥈 Pick #2…</option></select>
-              <select id="cd-pick3" class="grow"><option value="">🥉 Pick #3…</option></select>
-              <select id="cd-crash" class="grow"><option value="">🔥 First Crash…</option></select>
+              <select id="cd-pick1" class="grow"><option value="">🥇 Pick #1</option></select>
+              <select id="cd-pick2" class="grow"><option value="">🥈 Pick #2</option></select>
+              <select id="cd-pick3" class="grow"><option value="">🥉 Pick #3</option></select>
+              <select id="cd-crash" class="grow"><option value="">🔥 First Crash</option></select>
               <button class="btn" id="cd-submit" style="width: 100%;">Submit Picks</button>
             </div>
             <div class="error" id="cd-error"></div>
@@ -541,8 +551,8 @@
     setText('rp-buyin', config.randomPoolBuyIn);
     setText('cd-buyin', config.chickenDinnerBuyIn);
 
-    renderPayRow('pay-row-rp', config);
-    renderPayRow('pay-row-cd', config);
+    renderPayRow('pay-row-rp', config, config.randomPoolBuyIn);
+    renderPayRow('pay-row-cd', config, config.chickenDinnerBuyIn);
 
     renderOdds(field, state);
     renderRandomPool(field, state, config);
@@ -551,14 +561,49 @@
     renderAdmin(field, state);
   }
 
-  function renderPayRow(id, config) {
+  async function copyToClipboard(text, btnEl) {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      // Fallback for older browsers / non-secure contexts
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (_) { alert('Copy this: ' + text); }
+      document.body.removeChild(ta);
+    }
+    if (btnEl) {
+      const original = btnEl.innerHTML;
+      btnEl.classList.add('copied');
+      btnEl.innerHTML = '<span style="font-size:13px;">✓ COPIED</span><span class="copy-target">paste in your bank\'s Zelle</span>';
+      setTimeout(() => {
+        btnEl.classList.remove('copied');
+        btnEl.innerHTML = original;
+      }, 1800);
+    }
+  }
+
+  function renderPayRow(id, config, amount) {
     const el = document.getElementById(id);
     if (!el) return;
-    const venmo = `https://venmo.com/${(config.venmoHandle || '').replace(/^@/, '')}`;
+    const handle = (config.venmoHandle || '').replace(/^@/, '');
+    const note = encodeURIComponent('Indy 500 Party buy-in');
+    const amt = amount || 10;
+    const venmoPay = `https://venmo.com/?txn=pay&audience=private&recipients=${encodeURIComponent(handle)}&amount=${amt}&note=${note}`;
+    const zelle = config.zelleContact || '';
     el.innerHTML = `
-      <a href="${venmo}" target="_blank">Venmo</a>
-      <a href="mailto:${config.zelleContact}?subject=Indy%20500%20Buy-in">Zelle</a>
+      <a href="${venmoPay}" target="_blank" rel="noopener">📱 Venmo $${amt}</a>
+      <button type="button" class="copy-btn" data-copy="${escape(zelle)}">
+        <span>📋 COPY ZELLE</span>
+        <span class="copy-target">${escape(zelle)}</span>
+      </button>
     `;
+    el.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => copyToClipboard(btn.dataset.copy, btn));
+    });
   }
 
   function getDisplayOdds(pos, state, defaultOdds) {
