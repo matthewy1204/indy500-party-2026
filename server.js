@@ -16,9 +16,9 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 const CONFIG = {
   partyName: "Lucas's Indy 500 Party",
   raceDate: "Sunday · May 24, 2026 · 12:45 p.m. ET",
-  raceSub: "110th Running · Greatest Spectacle in Racing",
+  raceSub: "110th Running",
   venmoHandle: "@LilNeutyVert",
-  zelleContact: "Lucas@hunden.com",
+  zelleContact: "5023795471",
   randomPoolBuyIn: 10,
   chickenDinnerBuyIn: 10,
   adminPin: "indy2026",
